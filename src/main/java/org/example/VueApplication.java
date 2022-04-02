@@ -3,13 +3,15 @@ package org.example;
 import io.javalin.Javalin;
 import io.javalin.plugin.rendering.vue.JavalinVue;
 import io.javalin.plugin.rendering.vue.VueComponent;
-import org.example.controllers.UsersController;
+import org.example.api.UsersController;
+import org.example.auth.AppRole;
+import org.example.auth.AuthManager;
 import org.example.dao.UserNotFoundException;
 
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
 
-public class Application {
+public class VueApplication {
   public static void main(String[] args) {
     Javalin app = Javalin.create(config -> {
         config.enableWebjars();

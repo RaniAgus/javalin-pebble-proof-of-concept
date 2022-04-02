@@ -1,4 +1,4 @@
-package org.example.controllers;
+package org.example.api;
 
 import io.javalin.http.Context;
 import org.example.dao.UserRepository;
