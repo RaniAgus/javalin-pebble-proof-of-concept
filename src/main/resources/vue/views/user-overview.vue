@@ -1,11 +1,11 @@
 <template id="user-overview">
-  <div>
+  <app-frame>
     <ul class="user-overview-list">
       <li v-for="user in users">
         <a :href="`/users/${user.id}`">{{ user.name }} {{ user.email }}</a>
       </li>
     </ul>
-  </div>
+  </app-frame>
 </template>
 <script>
   Vue.component("user-overview", {

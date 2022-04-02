@@ -1,5 +1,5 @@
 <template id="user-profile">
-  <div>
+  <app-frame>
     <dl v-if="user">
       <dt>User ID</dt>
       <dd>{{user.id}}</dd>
@@ -8,7 +8,7 @@
       <dt>Email</dt>
       <dd>{{user.email}}</dd>
     </dl>
-  </div>
+  </app-frame>
 </template>
 
 <script>

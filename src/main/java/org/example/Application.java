@@ -10,6 +10,7 @@ public class Application {
   public static void main(String[] args) {
     Javalin app = Javalin.create(JavalinConfig::enableWebjars);
 
+    app.get("/", ctx -> ctx.redirect("/users"));
     app.get("/users", new VueComponent("user-overview"));
     app.get("/users/{user-id}", new VueComponent("user-profile"));
     app.error(404, "html", new VueComponent("not-found"));
