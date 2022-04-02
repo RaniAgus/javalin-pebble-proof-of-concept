@@ -11,6 +11,7 @@ public class Application {
     Javalin app = Javalin.create(JavalinConfig::enableWebjars);
 
     app.get("/users", new VueComponent("user-overview"));
+    app.get("/users/{user-id}", new VueComponent("user-profile"));
 
     app.get("/api/users", UserRepository::getAll);
     app.get("/api/users/{user-id}", UserRepository::getOne);
