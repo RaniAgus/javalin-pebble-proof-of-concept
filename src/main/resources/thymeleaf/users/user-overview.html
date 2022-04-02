@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layouts :: header"></head>
+<body>
+<nav th:replace="layouts :: navbar"></nav>
+<ul class="user-overview-list">
+  <li th:each="user : ${users}">
+    <a th:href="@{/users/{id}(id=${user.id})}" th:text="${user.name} + ' ' + ${user.email}"></a>
+  </li>
+</ul>
+</body>
+</html>
