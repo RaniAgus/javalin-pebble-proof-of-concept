@@ -3,11 +3,8 @@ package org.example;
 import io.javalin.Javalin;
 import io.javalin.plugin.rendering.vue.JavalinVue;
 import io.javalin.plugin.rendering.vue.VueComponent;
-import org.example.dao.UserRepository;
+import org.example.controllers.UsersController;
 import org.example.dao.UserNotFoundException;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
@@ -16,7 +13,7 @@ public class Application {
   public static void main(String[] args) {
     Javalin app = Javalin.create(config -> {
         config.enableWebjars();
-        config.accessManager(new SessionManager());
+        config.accessManager(new AuthManager());
     });
 
     JavalinVue.stateFunction = ctx -> ctx.basicAuthCredentialsExist() ?
@@ -27,8 +24,8 @@ public class Application {
     app.get("/users/{user-id}", new VueComponent("user-profile"), AppRole.LOGGED_IN);
     app.error(404, "html", new VueComponent("not-found"));
 
-    app.get("/api/users", UserRepository::getAll, AppRole.ANYONE);
-    app.get("/api/users/{user-id}", UserRepository::getOne, AppRole.LOGGED_IN);
+    app.get("/api/users", UsersController::getAll, AppRole.ANYONE);
+    app.get("/api/users/{user-id}", UsersController::getOne, AppRole.LOGGED_IN);
     app.exception(UserNotFoundException.class, (e, ctx) -> ctx.status(404).result(e.getMessage()));
 
     app.start(7070);

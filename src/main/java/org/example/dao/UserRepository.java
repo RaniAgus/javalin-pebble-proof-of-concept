@@ -1,14 +1,13 @@
 package org.example.dao;
 
-import io.javalin.http.Context;
-import org.example.dto.UserDTO;
 import org.example.model.User;
 import org.example.model.UserDetails;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toList;
 
 public abstract class UserRepository {
   private static final List<User> users = asList(
@@ -22,16 +21,14 @@ public abstract class UserRepository {
       new User("8", "Judy", "judy@fake.co", new UserDetails("1959-01-05", "2983 JB"))
   );
 
-  public static void getAll(Context ctx) {
-    ctx.json(users.stream().map(UserDTO::of).collect(toList()));
+  public static Set<User> findAll() {
+    return new HashSet<>(users);
   }
 
-  public static void getOne(Context ctx) {
-    User user = users.stream()
-        .filter(u -> u.getId().equals(ctx.pathParam("user-id")))
+  public static User findFirstById(String id) {
+    return users.stream()
+        .filter(u -> u.getId().equals(id))
         .findFirst()
-        .orElseThrow(() -> new UserNotFoundException(ctx.pathParam("user-id")));
-
-    ctx.json(UserDTO.of(user));
+        .orElseThrow(() -> new UserNotFoundException(id));
   }
 }
