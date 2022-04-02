@@ -12,6 +12,7 @@ public class Application {
 
     app.get("/users", new VueComponent("user-overview"));
     app.get("/users/{user-id}", new VueComponent("user-profile"));
+    app.error(404, "html", new VueComponent("not-found"));
 
     app.get("/api/users", UserRepository::getAll);
     app.get("/api/users/{user-id}", UserRepository::getOne);
