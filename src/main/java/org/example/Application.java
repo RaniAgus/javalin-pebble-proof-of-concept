@@ -1,9 +1,16 @@
 package org.example;
 
 import io.javalin.Javalin;
+import io.javalin.plugin.rendering.vue.JavalinVue;
 import io.javalin.plugin.rendering.vue.VueComponent;
 import org.example.dao.UserRepository;
 import org.example.dao.UserNotFoundException;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonMap;
 
 public class Application {
   public static void main(String[] args) {
@@ -11,6 +18,9 @@ public class Application {
         config.enableWebjars();
         config.accessManager(new SessionManager());
     });
+
+    JavalinVue.stateFunction = ctx -> ctx.basicAuthCredentialsExist() ?
+        singletonMap("currentUser", ctx.basicAuthCredentials().getUsername()): emptyMap();
 
     app.get("/", ctx -> ctx.redirect("/users"), AppRole.ANYONE);
     app.get("/users", new VueComponent("user-overview"), AppRole.ANYONE);
