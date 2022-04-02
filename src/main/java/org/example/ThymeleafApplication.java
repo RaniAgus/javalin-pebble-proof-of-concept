@@ -8,6 +8,10 @@ import org.example.auth.AppRole;
 import org.example.auth.AuthManager;
 import org.example.dao.UserNotFoundException;
 import org.example.dao.UserRepository;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import static io.javalin.plugin.rendering.template.TemplateUtil.model;
 
@@ -17,7 +21,7 @@ public class ThymeleafApplication {
       config.addStaticFiles("/public", Location.CLASSPATH);
       config.accessManager(new AuthManager());
       JavalinRenderer.register(JavalinThymeleaf.INSTANCE);
-      JavalinThymeleaf.configure(ThymeleafConfiguration.getInstance().getTemplateEngine());
+      JavalinThymeleaf.configure(templateEngine());
     });
 
     app.get("/", ctx -> ctx.redirect("/users"), AppRole.ANYONE);
@@ -37,5 +41,22 @@ public class ThymeleafApplication {
     app.error(404, "html", ctx -> ctx.render("not-found.html"));
 
     app.start(7070);
+  }
+
+  public static TemplateEngine templateEngine() {
+    TemplateEngine templateEngine = new TemplateEngine();
+    templateEngine.setTemplateResolver(templateResolver());
+
+    return templateEngine;
+  }
+
+  private static ITemplateResolver templateResolver() {
+    ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
+    templateResolver.setTemplateMode(TemplateMode.HTML);
+    templateResolver.setPrefix("/thymeleaf/");
+    templateResolver.setSuffix(".html");
+    templateResolver.setCharacterEncoding("UTF-8");
+
+    return templateResolver;
   }
 }
