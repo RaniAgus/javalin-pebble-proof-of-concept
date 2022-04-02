@@ -3,9 +3,8 @@ package org.example.dao;
 import org.example.model.User;
 import org.example.model.UserDetails;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static java.util.Arrays.asList;
 
@@ -21,8 +20,8 @@ public abstract class UserRepository {
       new User("8", "Judy", "judy@fake.co", new UserDetails("1959-01-05", "2983 JB"))
   );
 
-  public static Set<User> findAll() {
-    return new HashSet<>(users);
+  public static List<User> findAll() {
+    return new ArrayList<>(users);
   }
 
   public static User findFirstById(String id) {
