@@ -1,20 +1,14 @@
 package org.example;
 
 import io.javalin.Javalin;
+import io.javalin.core.JavalinConfig;
+import io.javalin.plugin.rendering.vue.VueComponent;
 
 public class HelloWorld {
   public static void main(String[] args) {
-    Javalin app = Javalin.create();
+    Javalin app = Javalin.create(JavalinConfig::enableWebjars);
 
-    app.get("/", ctx -> ctx.result("Hello World"));
-
-    app.get("/hello/{name}", ctx -> {
-      ctx.result("Hello " + ctx.pathParam("name").toUpperCase());
-    });
-
-    app.get("/path/*", ctx -> {
-      ctx.result("You are here because " + ctx.path() + " matches " + ctx.matchedPath());
-    });
+    app.get("/", new VueComponent("hello-world"));
 
     app.start(7070);
   }
