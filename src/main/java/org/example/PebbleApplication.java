@@ -38,7 +38,7 @@ public class PebbleApplication {
 
   private static ClasspathLoader classpathLoader() {
     ClasspathLoader classpathLoader = new ClasspathLoader();
-    classpathLoader.setPrefix("pebble/");
+    classpathLoader.setPrefix("templates");
     classpathLoader.setCharset("UTF-8");
 
     return classpathLoader;
