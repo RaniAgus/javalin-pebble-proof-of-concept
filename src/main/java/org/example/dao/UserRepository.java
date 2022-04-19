@@ -8,8 +8,8 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 
-public abstract class UserRepository {
-  private static final List<User> users = asList(
+public class UserRepository {
+  private final List<User> users = asList(
       new User("1", "John", "john@fake.co", new UserDetails("1964-02-21", "2773 JB")),
       new User("2", "Mary", "mary@fake.co", new UserDetails("1994-05-12", "1222 JB")),
       new User("3", "Dave", "dave@fake.co", new UserDetails("1984-05-01", "1833 JB")),
@@ -20,11 +20,11 @@ public abstract class UserRepository {
       new User("8", "Judy", "judy@fake.co", new UserDetails("1959-01-05", "2983 JB"))
   );
 
-  public static List<User> findAll() {
+  public List<User> findAll() {
     return new ArrayList<>(users);
   }
 
-  public static User findFirstById(String id) {
+  public User findFirstById(String id) {
     return users.stream()
         .filter(u -> u.getId().equals(id))
         .findFirst()
