@@ -2,31 +2,31 @@
 
 {% extends '../layout.peb' %}
 
-{% block style %}
-<style>
-    ul.user-overview-list {
+  {% block content %}
+    <main>
+      <ul class="user-overview-list">
+        {% for user in users %}
+          <li>
+            <a href="/users/{{ user.id }}">{{ user.name }} {{ user.email }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    </main>
+  {% endblock %}
+
+  {% block style %}
+    <style>
+      ul.user-overview-list {
         padding: 0;
         list-style: none;
-    }
-    ul.user-overview-list a {
+      }
+      ul.user-overview-list a {
         display: block;
         padding: 16px;
         border-bottom: 1px solid #ddd;
-    }
-    ul.user-overview-list a:hover {
+      }
+      ul.user-overview-list a:hover {
         background: #00000010;
-    }
-</style>
-{% endblock %}
-
-{% block content %}
-<main>
-  <ul class="user-overview-list">
-    {% for user in users %}
-    <li>
-      <a href="/users/{{ user.id }}">{{ user.name }} {{ user.email }}</a>
-    </li>
-    {% endfor %}
-  </ul>
-</main>
-{% endblock %}
+      }
+    </style>
+  {% endblock %}

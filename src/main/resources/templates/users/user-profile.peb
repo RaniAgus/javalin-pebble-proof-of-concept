@@ -2,17 +2,17 @@
 
 {% extends '../layout.peb' %}
 
-{% block content %}
-<main>
-  {% if user is not null %}
-    <dl>
-      <dt>User ID</dt>
-      <dd>{{ user.id }}</dd>
-      <dt>Name</dt>
-      <dd>{{ user.name }}</dd>
-      <dt>Email</dt>
-      <dd>{{ user.email }}</dd>
-    </dl>
-  {% endif %}
-</main>
-{% endblock %}
+  {% block content %}
+    <main>
+      {% if user is not null %}
+        <dl>
+          <dt>User ID</dt>
+          <dd>{{ user.id }}</dd>
+          <dt>Name</dt>
+          <dd>{{ user.name }}</dd>
+          <dt>Email</dt>
+          <dd>{{ user.email }}</dd>
+        </dl>
+      {% endif %}
+    </main>
+  {% endblock %}

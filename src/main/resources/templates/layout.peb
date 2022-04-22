@@ -12,6 +12,6 @@
 <nav>
   <a href="/"><span>JavalinPebble demo app</span></a>
 </nav>
-{% block content %}{% endblock %}
+  {% block content %}{% endblock %}
 </body>
 </html>
