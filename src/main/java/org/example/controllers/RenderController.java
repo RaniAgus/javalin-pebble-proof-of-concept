@@ -17,11 +17,11 @@ public class RenderController {
 
   public void getAll(Context ctx) {
     List<User> users = this.users.findAll();
-    ctx.render("users/user-overview.html", model("users", users));
+    ctx.render("users/user-overview.peb", model("users", users));
   }
 
   public void getOne(Context ctx) {
     User user = this.users.findFirstById(ctx.pathParam("user-id"));
-    ctx.render("users/user-profile.html", model("user", user));
+    ctx.render("users/user-profile.peb", model("user", user));
   }
 }

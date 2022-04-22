@@ -15,7 +15,7 @@ public class ApplicationConfig implements Consumer<JavalinConfig> {
   public void accept(JavalinConfig javalinConfig) {
     javalinConfig.addStaticFiles("public", Location.CLASSPATH);
     javalinConfig.accessManager(new AuthManager());
-    JavalinRenderer.register(JavalinPebble.INSTANCE, ".html");
+    JavalinRenderer.register(JavalinPebble.INSTANCE, ".peb");
     JavalinPebble.configure(getEngine());
   }
 

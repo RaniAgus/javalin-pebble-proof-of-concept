@@ -1,4 +1,6 @@
-{% extends '../layout.html' %}
+{# @pebvariable name="users" type="java.util.List<org.example.model.User>" #}
+
+{% extends '../layout.peb' %}
 
 {% block style %}
 <style>

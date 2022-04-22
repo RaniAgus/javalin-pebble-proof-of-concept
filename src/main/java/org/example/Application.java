@@ -18,6 +18,6 @@ public class Application {
     app.get("/users/{user-id}", renderController::getOne, AppRole.LOGGED_IN);
 
     app.exception(UserNotFoundException.class, (e, ctx) -> ctx.status(404));
-    app.error(404, "html", ctx -> ctx.render("not-found.html"));
+    app.error(404, "html", ctx -> ctx.render("not-found.peb"));
   }
 }

@@ -1,4 +1,6 @@
-{% extends '../layout.html' %}
+{# @pebvariable name="user" type="org.example.model.User" #}
+
+{% extends '../layout.peb' %}
 
 {% block content %}
 <main>
