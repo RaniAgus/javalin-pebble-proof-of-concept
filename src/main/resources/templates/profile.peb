@@ -1,4 +1,4 @@
-{% extends 'base.peb' %}
+{% extends 'layout/base.peb' %}
 {% set activeNav = 'profile' %}
 
 {% block content %}

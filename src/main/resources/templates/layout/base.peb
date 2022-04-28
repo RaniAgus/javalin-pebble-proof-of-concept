@@ -11,13 +11,13 @@
 
 <div id="wrap">
 
-  {% include 'navbar.peb' %}
+  {% include 'layout/navbar.peb' %}
 
   <div class="container">
 
     <div class="row">
       <div class="col-md-3">
-        {% include 'sidebar.peb' %}
+        {% include 'layout/sidebar.peb' %}
       </div>
       <div class="col-md-9">
         {% block content %}
@@ -30,7 +30,7 @@
 
 </div><!-- end wrap -->
 
-{% include 'footer.peb' %}
+{% include 'layout/footer.peb' %}
 
 </body>
 </html>

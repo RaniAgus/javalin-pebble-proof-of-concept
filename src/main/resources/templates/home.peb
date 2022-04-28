@@ -1,6 +1,6 @@
 {# @pebvariable name="posts" type="java.util.List<org.example.data.Post>"  #}
 
-{% extends 'base.peb' %}
+{% extends 'layout/base.peb' %}
 {% set activeNav = 'home' %}
 
 {% block content %}

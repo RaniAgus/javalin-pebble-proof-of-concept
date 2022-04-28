@@ -1,0 +1,7 @@
+<div class="sidebar">
+
+  {% include 'layout/panels/favorites-panel.peb' %}
+	{% include 'layout/panels/friends-panel.peb' %}
+	{% include 'layout/panels/groups-panel.peb' %}
+
+</div>
