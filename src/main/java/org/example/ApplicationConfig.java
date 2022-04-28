@@ -6,15 +6,13 @@ import io.javalin.core.JavalinConfig;
 import io.javalin.http.staticfiles.Location;
 import io.javalin.plugin.rendering.JavalinRenderer;
 import io.javalin.plugin.rendering.template.JavalinPebble;
-import org.example.auth.AuthManager;
 
 import java.util.function.Consumer;
 
 public class ApplicationConfig implements Consumer<JavalinConfig> {
   @Override
   public void accept(JavalinConfig javalinConfig) {
-    javalinConfig.addStaticFiles("public", Location.CLASSPATH);
-    javalinConfig.accessManager(new AuthManager());
+    javalinConfig.addStaticFiles("static", Location.CLASSPATH);
     JavalinRenderer.register(JavalinPebble.INSTANCE, ".peb");
     JavalinPebble.configure(getEngine());
   }

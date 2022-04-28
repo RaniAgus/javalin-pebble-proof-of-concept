@@ -1,21 +1,24 @@
 package org.example;
 
 import io.javalin.Javalin;
-import org.example.auth.AppRole;
-import org.example.controllers.RenderController;
-import org.example.dao.UserNotFoundException;
-import org.example.dao.UserRepository;
+import org.example.controllers.HomeController;
+import org.example.controllers.ProfileController;
+import org.example.service.UserNotFoundException;
+import org.example.service.PostService;
+import org.example.service.UserService;
 
 public class Application {
-  private static final UserRepository userRepository = new UserRepository();
-  private static final RenderController renderController = new RenderController(userRepository);
+  private static final PostService postService = new PostService();
+  private static final UserService userService = new UserService();
+  private static final HomeController homeController = new HomeController(postService);
+  private static final ProfileController profileController = new ProfileController(userService);
 
   public static void main(String[] args) {
     Javalin app = Javalin.create(new ApplicationConfig()).start(7070);
 
-    app.get("/", ctx -> ctx.redirect("/users"), AppRole.ANYONE);
-    app.get("/users", renderController::getAll, AppRole.ANYONE);
-    app.get("/users/{user-id}", renderController::getOne, AppRole.LOGGED_IN);
+    app.get("/", ctx -> ctx.redirect("/home"));
+    app.get("/home", homeController::getUserListing);
+    app.get("/profiles/{id}", profileController::getUserProfile);
 
     app.exception(UserNotFoundException.class, (e, ctx) -> ctx.status(404));
     app.error(404, "html", ctx -> ctx.render("not-found.peb"));

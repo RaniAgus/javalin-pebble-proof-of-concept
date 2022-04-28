@@ -1,0 +1,26 @@
+{# @pebvariable name="posts" type="java.util.List<org.example.data.Post>"  #}
+
+{% extends 'base.peb' %}
+{% set activeNav = 'home' %}
+
+{% block content %}
+
+  {% for post in posts %}
+    <div class="row news-item">
+      <div class="col-md-2">
+        <a href="/profiles/{{ post.userId }}" class="thumbnail">
+          <img src="/images/{{ post.userId }}.jpg" alt="user profile picture">
+        </a>
+      </div>
+      <div class="col-md-6">
+        <h4><a href="/profiles/{{ post.userId }}">{{ post.userName }}</a><small> {{ post.date | date("MM-dd") }}</small></h4>
+        <p> {{ post.details }} </p>
+        <p class="like-count"> {{ post.likes }} likes </p>
+        <div class="comments">
+          <input type="text" placeholder="Write a comment..." />
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+
+{% endblock content %}

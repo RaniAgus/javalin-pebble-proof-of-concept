@@ -1,0 +1,34 @@
+{% extends 'base.peb' %}
+{% set activeNav = 'profile' %}
+
+{% block content %}
+
+<div class="profile">
+  <h2>
+    {{ user.firstName | capitalize }} {{ user.lastName | capitalize }}
+  </h2>
+  <div class="row">
+    <div class="col-md-2">
+      <img src="/images/{{ user.id }}.jpg" alt="user profile picture">
+    </div>
+
+    <div class="col-md-10">
+      <dl class="dl-horizontal">
+        <dt>ID</dt>
+        <dd>{{ user.id }}</dd>
+
+        <dt>Birthday</dt>
+        <dd>{{ user.birthday | date("yyyy-MM-dd") | default("-") }}</dd>
+
+        <dt>Gender</dt>
+        <dd>{{ user.gender }}</dd>
+
+        <dt>Email</dt>
+        <dd>{{ user.email }}</dd>
+      </dl>
+    </div>
+  </div>
+
+</div>
+
+{% endblock content %}

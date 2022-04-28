@@ -1,4 +1,4 @@
-package org.example.dao;
+package org.example.service;
 
 public class UserNotFoundException extends RuntimeException {
   public UserNotFoundException(String id) {
