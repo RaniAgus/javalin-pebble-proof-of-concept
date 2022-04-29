@@ -1,36 +1,33 @@
 package org.example.controllers;
 
-import io.javalin.core.util.FileUtil;
 import io.javalin.http.Context;
 import io.javalin.http.UploadedFile;
 import org.example.data.User;
-import org.example.repository.UserRepository;
-import org.example.validators.ValidationExceptionFactory;
-import org.uqbarproject.jpa.java8.extras.WithGlobalEntityManager;
-import org.uqbarproject.jpa.java8.extras.transaction.TransactionalOps;
+import org.example.service.UserService;
 
 import java.time.LocalDate;
 
 import static io.javalin.plugin.rendering.template.TemplateUtil.model;
 
-public class ProfileController implements WithGlobalEntityManager, TransactionalOps {
-  private final UserRepository userRepository;
+public class ProfileController extends BaseRepository {
+  private final UserService userService;
 
-  public ProfileController(UserRepository userRepository) {
-    this.userRepository = userRepository;
+  public ProfileController(UserService userService) {
+    this.userService = userService;
   }
 
   public void getUserProfile(Context ctx) {
     Long id = ctx.pathParamAsClass("id", Long.class).get();
-    ctx.render("profile.peb", model("user", this.userRepository.getUser(id)));
+    ctx.render("profile.peb", model("user", this.userService.getUser(id)));
   }
 
   public void getEditUserProfileForm(Context ctx) {
     Long id = ctx.pathParamAsClass("id", Long.class).get();
-    ctx.render("profile-edit.peb", model("user", this.userRepository.getUser(id)));
+    ctx.render("profile-edit.peb", model("user", this.userService.getUser(id)));
   }
 
   public void editUserProfile(Context ctx) {
+    UploadedFile photo = getUploadedFile(ctx, "photo");
     User user = new User(
         ctx.formParamAsClass("firstName", String.class).get(),
         ctx.formParamAsClass("lastName", String.class).get(),
@@ -40,22 +37,7 @@ public class ProfileController implements WithGlobalEntityManager, Transactional
     );
     user.setId(ctx.formParamAsClass("id", Long.class).get());
 
-    UploadedFile photo = ctx.uploadedFile("photo");
-    if (photo == null) {
-      throw ValidationExceptionFactory.nullcheckFailed("photo");
-    }
-
-    entityManager().getTransaction().begin();
-    this.userRepository.putUser(user);
-    if (photo.getSize() > 0) {
-      FileUtil.streamToFile(
-          photo.getContent(),
-          "static/images/" + ctx.pathParam("id") + ".jpg"
-      );
-    }
-    entityManager().getTransaction().commit();
-
+    this.userService.editUserProfile(user, photo);
     ctx.redirect("/profiles/" + user.getId());
   }
-
 }

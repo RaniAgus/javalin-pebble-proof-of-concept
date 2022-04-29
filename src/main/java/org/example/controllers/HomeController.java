@@ -1,18 +1,18 @@
 package org.example.controllers;
 
 import io.javalin.http.Context;
-import org.example.repository.PostRepository;
+import org.example.service.PostService;
 
 import static io.javalin.plugin.rendering.template.TemplateUtil.model;
 
-public class HomeController {
-  private final PostRepository postRepository;
+public class HomeController extends BaseRepository {
+  private final PostService postService;
 
-  public HomeController(PostRepository postRepository) {
-    this.postRepository = postRepository;
+  public HomeController(PostService postService) {
+    this.postService = postService;
   }
 
   public void getUserListing(Context ctx) {
-    ctx.render("home.peb", model("posts", this.postRepository.getPosts()));
+    ctx.render("home.peb", model("posts", this.postService.getPosts()));
   }
 }
