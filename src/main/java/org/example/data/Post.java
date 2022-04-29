@@ -3,14 +3,15 @@ package org.example.data;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import java.time.LocalDate;
 
 @Entity
 public class Post {
   private @Id @GeneratedValue Long id;
 
-  private String userId;
-  private String userName;
+  @ManyToOne
+  private User user;
   private LocalDate date;
   private Integer likes;
   private String details;
@@ -26,28 +27,19 @@ public class Post {
   public Post() {
   }
 
-  public Post(String userId, String userName, LocalDate date, Integer likes, String details) {
-    this.userId = userId;
-    this.userName = userName;
+  public Post(User user, LocalDate date, Integer likes, String details) {
+    this.user = user;
     this.date = date;
     this.likes = likes;
     this.details = details;
   }
 
-  public String getUserId() {
-    return userId;
+  public User getUser() {
+    return user;
   }
 
-  public void setUserId(String userId) {
-    this.userId = userId;
-  }
-
-  public String getUserName() {
-    return userName;
-  }
-
-  public void setUserName(String userName) {
-    this.userName = userName;
+  public void setUser(User user) {
+    this.user = user;
   }
 
   public LocalDate getDate() {

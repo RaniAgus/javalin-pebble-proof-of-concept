@@ -11,10 +11,8 @@ import java.time.LocalDate;
 public class Bootstrap implements WithGlobalEntityManager, EntityManagerOps, TransactionalOps, Runnable {
   @Override
   public void run() {
-    withTransaction(() -> {
-      persistPosts();
-      persistUsers();
-    });
+    withTransaction(this::persistUsers);
+    withTransaction(this::persistPosts);
   }
 
   private void persistUsers() {
@@ -30,21 +28,21 @@ public class Bootstrap implements WithGlobalEntityManager, EntityManagerOps, Tra
 
   private void persistPosts() {
     persist(
-        new Post("1", "Katniss Everdeen", LocalDate.now(), 2,
+        new Post(entityManager().find(User.class, 1L), LocalDate.now(), 2,
             "Ugh. I'm so hungry. Does anyone want to play a game?"));
-    persist(new Post("2", "Tyrion Lannister", LocalDate.now(), 0,
+    persist(new Post(entityManager().find(User.class, 2L), LocalDate.now(), 0,
         "Is it okay to hate your family? Like are you serious nephew? Seriously serious?"));
-    persist(new Post("3", "Hank Schrader", LocalDate.now(), 0,
+    persist(new Post(entityManager().find(User.class, 3L), LocalDate.now(), 0,
         "Hey does anyone on here know a W.W? I'm working on a case."));
-    persist(new Post("4", "Steve Holt", null, 45, "STEVE HOLT"));
-    persist(new Post("5", "Rick O'Connell", LocalDate.now(), 1,
+    persist(new Post(entityManager().find(User.class, 4L), null, 45, "STEVE HOLT"));
+    persist(new Post(entityManager().find(User.class, 5L), LocalDate.now(), 1,
         "IT LOOKS TO ME LIKE YOU'RE ON THE WRONG SIDE OF THE RIVER"));
-    persist(new Post("6", "Samwise Gamgee", null, 7,
+    persist(new Post(entityManager().find(User.class, 6L), null, 7,
         "Welp. I don't think I'm going to be home for awhile."));
-    persist(new Post("7", "Elaine Benes", LocalDate.now(), 3,
+    persist(new Post(entityManager().find(User.class, 7L), LocalDate.now(), 3,
         "You're through, Soup Nazi. Pack it up. No more soup for you. Next!"));
     persist(
-        new Post("8", "Kenny Powers", LocalDate.now(), -1,
+        new Post(entityManager().find(User.class, 8L), LocalDate.now(), -1,
             "Anyone want a kid? I'm done with this. F*** this noise."));
   }
 }

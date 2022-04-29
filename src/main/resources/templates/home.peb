@@ -8,12 +8,15 @@
   {% for post in posts %}
     <div class="row news-item">
       <div class="col-md-2">
-        <a href="/profiles/{{ post.userId }}" class="thumbnail">
-          <img src="/images/{{ post.userId }}.jpg" alt="user profile picture">
+        <a href="/profiles/{{ post.user.id }}" class="thumbnail">
+          <img src="/images/{{ post.user.id }}.jpg" alt="user profile picture">
         </a>
       </div>
       <div class="col-md-6">
-        <h4><a href="/profiles/{{ post.userId }}">{{ post.userName }}</a><small> {{ post.date | date("MM-dd") }}</small></h4>
+        <h4>
+          <a href="/profiles/{{ post.user.id }}">{{ post.user.firstName }} {{ post.user.lastName }}</a>
+          <small> {{ post.date | date("MM-dd") }}</small>
+        </h4>
         <p> {{ post.details }} </p>
         <p class="like-count"> {{ post.likes }} likes </p>
         <div class="comments">
