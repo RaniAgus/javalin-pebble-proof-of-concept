@@ -47,7 +47,7 @@
         </dt>
         <dd>
           <input class="form-control" type="date" name="birthday" id="birthday"
-                 value="{{ user.birthday | date("yyyy-MM-dd") | default("-") }}" required>
+                 value="{{ user.birthday | date("yyyy-MM-dd") | default("-") }}">
         </dd>
 
         <dt>

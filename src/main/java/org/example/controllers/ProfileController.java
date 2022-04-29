@@ -5,6 +5,7 @@ import io.javalin.http.Context;
 import io.javalin.http.UploadedFile;
 import org.example.data.User;
 import org.example.repository.UserRepository;
+import org.example.validators.ValidationExceptionFactory;
 import org.uqbarproject.jpa.java8.extras.WithGlobalEntityManager;
 import org.uqbarproject.jpa.java8.extras.transaction.TransactionalOps;
 
@@ -33,23 +34,26 @@ public class ProfileController implements WithGlobalEntityManager, Transactional
     User user = new User(
         ctx.formParamAsClass("firstName", String.class).get(),
         ctx.formParamAsClass("lastName", String.class).get(),
-        ctx.formParamAsClass("birthday", LocalDate.class).get(),
+        ctx.formParamAsClass("birthday", LocalDate.class).allowNullable().get(),
         ctx.formParamAsClass("gender", String.class).get(),
         ctx.formParamAsClass("email", String.class).get()
     );
     user.setId(ctx.formParamAsClass("id", Long.class).get());
 
+    UploadedFile picture = ctx.uploadedFile("picture");
+    if (picture == null) {
+      throw ValidationExceptionFactory.nullcheckFailed("picture");
+    }
+
     entityManager().getTransaction().begin();
     this.userRepository.putUser(user);
-    entityManager().getTransaction().commit();
-
-    UploadedFile picture = ctx.uploadedFile("picture");
-    if (picture != null && picture.getSize() > 0) {
+    if (picture.getSize() > 0) {
       FileUtil.streamToFile(
           picture.getContent(),
           "target/classes/static/images/" + ctx.pathParam("id") + ".jpg"
       );
     }
+    entityManager().getTransaction().commit();
 
     ctx.redirect("/profiles/" + user.getId());
   }
