@@ -21,13 +21,13 @@
   </div>
   <div class="row">
     <div class="col-md-2">
-      <img id="profilePic" src="/images/{{ user.id }}.jpg"
-           width="100" height="100" alt="user profile picture">
+      <img id="photoImg" src="/images/{{ user.id }}.jpg"
+           width="100" height="100" alt="profile photo">
       <div class="input-group-btn">
-        <label for="picture" class="btn btn-default">Change picture</label>
+        <label for="photo" class="btn btn-default">Change photo</label>
         <input class="btn btn-default" style="visibility:hidden;"
-               type="file" name="picture" id="picture" accept="image/jpeg"
-               onchange="document.getElementById('profilePic').src = window.URL.createObjectURL(this.files[0])"
+               type="file" name="photo" id="photo" accept="image/jpeg"
+               onchange="document.getElementById('photoImg').src = window.URL.createObjectURL(this.files[0])"
         >
       </div>
     </div>

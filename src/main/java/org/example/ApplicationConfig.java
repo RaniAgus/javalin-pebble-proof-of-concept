@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 public class ApplicationConfig implements Consumer<JavalinConfig> {
   @Override
   public void accept(JavalinConfig javalinConfig) {
-    javalinConfig.addStaticFiles("static", Location.CLASSPATH);
+    javalinConfig.addStaticFiles("static", Location.EXTERNAL);
     JavalinRenderer.register(JavalinPebble.INSTANCE, ".peb");
     JavalinPebble.configure(configureEngine());
     JavalinValidation.register(LocalDate.class, new LocalDateValidator());

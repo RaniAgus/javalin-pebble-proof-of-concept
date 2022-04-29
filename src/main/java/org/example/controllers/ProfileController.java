@@ -40,17 +40,17 @@ public class ProfileController implements WithGlobalEntityManager, Transactional
     );
     user.setId(ctx.formParamAsClass("id", Long.class).get());
 
-    UploadedFile picture = ctx.uploadedFile("picture");
-    if (picture == null) {
-      throw ValidationExceptionFactory.nullcheckFailed("picture");
+    UploadedFile photo = ctx.uploadedFile("photo");
+    if (photo == null) {
+      throw ValidationExceptionFactory.nullcheckFailed("photo");
     }
 
     entityManager().getTransaction().begin();
     this.userRepository.putUser(user);
-    if (picture.getSize() > 0) {
+    if (photo.getSize() > 0) {
       FileUtil.streamToFile(
-          picture.getContent(),
-          "target/classes/static/images/" + ctx.pathParam("id") + ".jpg"
+          photo.getContent(),
+          "static/images/" + ctx.pathParam("id") + ".jpg"
       );
     }
     entityManager().getTransaction().commit();
