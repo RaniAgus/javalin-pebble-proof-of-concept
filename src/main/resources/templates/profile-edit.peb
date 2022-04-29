@@ -1,0 +1,78 @@
+{# @pebvariable name="user" type="org.example.data.User" #}
+
+{% extends 'layout/base.peb' %}
+{% set activeNav = 'profile' %}
+
+{% block content %}
+
+<form class="profile form-group" action="/profiles/{{ user.id }}/edit" method="post" >
+  <div class="row">
+    <div class="col-md-6">
+      <label for="firstName">First Name</label>
+      <input class="form-control" type="text" name="firstName" id="firstName"
+             value="{{ user.firstName }}" required>
+    </div>
+    <div class="col-md-6">
+      <label for="lastName">First Name</label>
+      <input class="form-control" type="text" name="lastName" id="lastName"
+             value="{{ user.lastName }}" required>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-2">
+      <img src="/images/{{ user.id }}.jpg" alt="user profile picture">
+    </div>
+
+    <div class="col-md-10">
+      <dl class="dl-horizontal">
+        <dt>
+          <label for="id">ID</label>
+        </dt>
+        <dd>
+          <input class="form-control" type="text" name="id" id="id"
+                 value="{{ user.id }}" readonly>
+        </dd>
+
+        <dt>
+          <label for="birthday">Birthday</label>
+        </dt>
+        <dd>
+          <input class="form-control" type="date" name="birthday" id="birthday"
+                 value="{{ user.birthday | date("yyyy-MM-dd") | default("-") }}" required>
+        </dd>
+
+        <dt>
+          <label for="gender">Gender</label>
+        </dt>
+        <dd>
+          <select class="form-control" name="gender" id="gender" required>
+            <option value="Male" {% if user.gender == "Male" %} selected {% endif %}>
+              Male
+            </option>
+            <option value="Female" {% if user.gender == "Female" %} selected {% endif %}>
+              Female
+            </option>
+            <option value="Other" {% if user.gender == "Other" %} selected {% endif %}>
+              Other
+            </option>
+          </select>
+        </dd>
+
+        <dt>
+          <label for="email">Email</label>
+        </dt>
+        <dd>
+          <input class="form-control" type="email" name="email" id="email"
+                 value="{{ user.email }}" required>
+        </dd>
+      </dl>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12 text-right">
+      <button class="btn btn-primary" type="submit">Edit profile</button>
+    </div>
+  </div>
+</form>
+
+{% endblock content %}

@@ -19,6 +19,8 @@ public class Application {
     app.get("/", ctx -> ctx.redirect("/home"));
     app.get("/home", homeController::getUserListing);
     app.get("/profiles/{id}", profileController::getUserProfile);
+    app.get("/profiles/{id}/edit", profileController::getEditUserProfileForm);
+    app.post("/profiles/{id}/edit", profileController::editUserProfile);
 
     app.exception(UserNotFoundException.class, (e, ctx) -> ctx.status(404));
     app.error(404, "html", ctx -> ctx.render("not-found.peb"));

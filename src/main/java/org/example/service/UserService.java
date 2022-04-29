@@ -30,4 +30,9 @@ public class UserService {
         .findFirst()
         .orElseThrow(() -> new UserNotFoundException(id));
   }
+
+  public void putUser(User user) {
+    users.remove(getUser(user.getId()));
+    users.add(user);
+  }
 }
