@@ -48,7 +48,7 @@ public class ProfileController implements WithGlobalEntityManager, Transactional
     entityManager().getTransaction().commit();
 
     UploadedFile picture = ctx.uploadedFile("picture");
-    if (picture != null) {
+    if (picture != null && picture.getSize() > 0) {
       FileUtil.streamToFile(
           picture.getContent(),
           "target/classes/static/images/" + ctx.pathParam("id") + ".jpg"
