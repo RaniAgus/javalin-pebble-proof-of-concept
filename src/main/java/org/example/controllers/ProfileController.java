@@ -1,6 +1,8 @@
 package org.example.controllers;
 
+import io.javalin.core.util.FileUtil;
 import io.javalin.http.Context;
+import io.javalin.http.UploadedFile;
 import org.example.data.User;
 import org.example.service.UserService;
 import org.uqbarproject.jpa.java8.extras.WithGlobalEntityManager;
@@ -44,6 +46,14 @@ public class ProfileController implements WithGlobalEntityManager, Transactional
     entityManager().getTransaction().begin();
     this.userService.putUser(user);
     entityManager().getTransaction().commit();
+
+    UploadedFile picture = ctx.uploadedFile("picture");
+    if (picture != null) {
+      FileUtil.streamToFile(
+          picture.getContent(),
+          "target/classes/static/images/" + ctx.pathParam("id") + ".jpg"
+      );
+    }
 
     ctx.redirect("/profiles/" + user.getId());
   }
