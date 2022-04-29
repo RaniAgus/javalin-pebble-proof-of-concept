@@ -1,11 +1,11 @@
-package org.example.service;
+package org.example.repository;
 
 import org.example.data.User;
 import org.uqbarproject.jpa.java8.extras.WithGlobalEntityManager;
 
 import java.util.Optional;
 
-public class UserService implements WithGlobalEntityManager {
+public class UserRepository implements WithGlobalEntityManager {
   public User getUser(Long id) {
     return Optional.ofNullable(entityManager().find(User.class, id))
         .orElseThrow(() -> new UserNotFoundException(id));
