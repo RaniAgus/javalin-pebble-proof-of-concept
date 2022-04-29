@@ -70,7 +70,8 @@
   </div>
   <div class="row">
     <div class="col-md-12 text-right">
-      <button class="btn btn-primary" type="submit">Edit profile</button>
+      <a href="/profiles/{{ user.id }}" class="btn btn-secondary">Cancel</a>
+      <button class="btn btn-success" type="submit">Save changes</button>
     </div>
   </div>
 </form>

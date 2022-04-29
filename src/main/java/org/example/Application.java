@@ -14,6 +14,8 @@ public class Application {
   private static final ProfileController profileController = new ProfileController(userService);
 
   public static void main(String[] args) {
+    new Bootstrap().run();
+
     Javalin app = Javalin.create(new ApplicationConfig()).start(7070);
 
     app.get("/", ctx -> ctx.redirect("/home"));

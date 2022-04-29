@@ -1,13 +1,27 @@
 package org.example.data;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.time.LocalDate;
 
+@Entity
 public class Post {
+  private @Id @GeneratedValue Long id;
+
   private String userId;
   private String userName;
   private LocalDate date;
   private Integer likes;
   private String details;
+
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
 
   public Post() {
   }

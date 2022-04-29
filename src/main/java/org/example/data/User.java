@@ -1,9 +1,13 @@
 package org.example.data;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.time.LocalDate;
 
+@Entity
 public class User {
-  private String id;
+  private @Id @GeneratedValue Long id;
   private String firstName;
   private String lastName;
   private LocalDate birthday;
@@ -13,8 +17,7 @@ public class User {
   public User() {
   }
 
-  public User(String id, String firstName, String lastName, LocalDate birthday, String gender, String email) {
-    this.id = id;
+  public User(String firstName, String lastName, LocalDate birthday, String gender, String email) {
     this.firstName = firstName;
     this.lastName = lastName;
     this.birthday = birthday;
@@ -22,11 +25,11 @@ public class User {
     this.email = email;
   }
 
-  public String getId() {
+  public Long getId() {
     return id;
   }
 
-  public void setId(String id) {
+  public void setId(Long id) {
     this.id = id;
   }
 

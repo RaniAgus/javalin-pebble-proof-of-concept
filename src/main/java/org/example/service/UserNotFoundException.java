@@ -1,7 +1,7 @@
 package org.example.service;
 
 public class UserNotFoundException extends RuntimeException {
-  public UserNotFoundException(String id) {
+  public UserNotFoundException(Long id) {
     super("Could not find user " + id);
   }
 }

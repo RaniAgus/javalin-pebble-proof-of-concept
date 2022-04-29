@@ -32,4 +32,5 @@ public class ApplicationConfig implements Consumer<JavalinConfig> {
         .strictVariables(true)
         .build();
   }
+
 }
