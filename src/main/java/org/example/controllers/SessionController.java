@@ -1,6 +1,7 @@
 package org.example.controllers;
 
 import io.javalin.http.Context;
+import org.example.auth.JWT;
 import org.example.data.User;
 import org.example.repository.UserNotFoundException;
 import org.example.service.UserService;
@@ -28,7 +29,7 @@ public class SessionController extends BaseController {
 
       // TODO: Check user password
 
-      ctx.cookie("userId", user.getId().toString());
+      ctx.cookie("session", JWT.sign(user.getId()));
       ctx.redirect("/" + ctx.formParam("origin"));
     } catch (UserNotFoundException e) {
       ctx.redirect("/login?error=true");
@@ -36,7 +37,7 @@ public class SessionController extends BaseController {
   }
 
   public void logout(Context ctx) {
-    ctx.removeCookie("userId");
+    ctx.removeCookie("session");
     ctx.redirect("/");
   }
 }

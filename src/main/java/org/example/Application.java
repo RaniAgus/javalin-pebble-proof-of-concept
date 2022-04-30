@@ -30,12 +30,12 @@ public class Application {
 
     Javalin app = Javalin.create(new ApplicationConfig()).start(7070);
 
-    app.get("/", ctx -> ctx.redirect("/home"));
-    app.get("/home", HOME_CONTROLLER::getUserListing);
+    app.get("/", ctx -> ctx.redirect("/home"), SessionRole.ANYONE);
+    app.get("/home", HOME_CONTROLLER::getUserListing, SessionRole.ANYONE);
     app.get("/login", SESSION_CONTROLLER::getLogin, SessionRole.NOT_LOGGED_IN);
     app.post("/login", SESSION_CONTROLLER::login, SessionRole.NOT_LOGGED_IN);
-    app.get("/logout", SESSION_CONTROLLER::logout);
-    app.get("/profiles/{id}", PROFILE_CONTROLLER::getUserProfile);
+    app.get("/logout", SESSION_CONTROLLER::logout, SessionRole.ANYONE);
+    app.get("/profiles/{id}", PROFILE_CONTROLLER::getUserProfile, SessionRole.ANYONE);
     app.get("/profiles/{id}/edit", PROFILE_CONTROLLER::getEditUserProfileForm, SessionRole.LOGGED_IN);
     app.post("/profiles/{id}", PROFILE_CONTROLLER::editUserProfile, SessionRole.LOGGED_IN);
 
