@@ -1,7 +1,8 @@
 # javalin-pebble-example
 
-Example Application using Javalin + Pebble. Templates were extracted from 
-[PebbleTemplates/pebble-example-spring](https://github.com/PebbleTemplates/pebble-example-spring)
+Example Application using Javalin, Pebble, JPA and JJWT. 
+
+Templates were extracted from [PebbleTemplates/pebble-example-spring](https://github.com/PebbleTemplates/pebble-example-spring)
 
 ## Setup
 
