@@ -1,6 +1,9 @@
 {# @pebvariable name="origin" type="String" #}
 {# @pebvariable name="error" type="boolean" #}
+
 {% extends 'base.peb' %}
+
+{% block styles %} <link rel="stylesheet" href="/css/signin.css" /> {% endblock %}
 
 {% block title %} Social Network - Login {% endblock %}
 

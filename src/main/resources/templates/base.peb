@@ -3,7 +3,10 @@
 <html lang="en">
 <head>
   <link rel="stylesheet" href="/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="/css/style.css" />
+  {% block styles %}
+    {# This section is to be overriden by child templates #}
+  {% endblock %}
+
   <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
   <script defer src="/js/bootstrap.min.js"></script>
   <title>
