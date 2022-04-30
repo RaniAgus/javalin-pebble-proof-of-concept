@@ -14,9 +14,9 @@ public enum SessionRole implements RouteRole {
   LOGGED_IN {
     @Override
     boolean verify(Handler handler, Context ctx) {
-      Long userId = JWT.getSession(ctx);
+      Long userId = SessionToken.get(ctx);
       if (userId == null) {
-        JWT.clearSession(ctx);
+        SessionToken.clear(ctx);
         ctx.redirect(
             "/login?origin=" + ctx.path()
                 .substring(1)
@@ -36,12 +36,12 @@ public enum SessionRole implements RouteRole {
   NOT_LOGGED_IN {
     @Override
     boolean verify(Handler handler, Context ctx) {
-      if (JWT.getSession(ctx) != null) {
+      if (SessionToken.get(ctx) != null) {
         ctx.redirect("/" + ctx.queryParam("origin"));
         return false;
       }
 
-      JWT.clearSession(ctx);
+      SessionToken.clear(ctx);
       return true;
     }
   };

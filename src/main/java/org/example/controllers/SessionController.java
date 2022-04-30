@@ -1,7 +1,7 @@
 package org.example.controllers;
 
 import io.javalin.http.Context;
-import org.example.auth.JWT;
+import org.example.auth.SessionToken;
 import org.example.data.User;
 import org.example.repository.UserNotFoundException;
 import org.example.repository.UserRepository;
@@ -28,7 +28,7 @@ public class SessionController {
       User user = this.users.getByEmail(email);
 
       // TODO: Check user password
-      JWT.setSession(ctx, user.getId());
+      SessionToken.set(ctx, user.getId());
 
       ctx.redirect("/" + ctx.formParam("origin"));
     } catch (UserNotFoundException e) {
@@ -37,7 +37,7 @@ public class SessionController {
   }
 
   public void logout(Context ctx) {
-    JWT.clearSession(ctx);
+    SessionToken.clear(ctx);
     ctx.redirect("/");
   }
 }

@@ -10,12 +10,12 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.Date;
 
-public abstract class JWT {
+public abstract class SessionToken {
   private static final SecretKey privateKey = Keys.hmacShaKeyFor(
       System.getenv("APP_SECRET").getBytes(StandardCharsets.UTF_8)
   );
 
-  public static void setSession(Context ctx, Long userId) {
+  public static void set(Context ctx, Long userId) {
     String session = Jwts.builder()
         .setSubject(userId.toString())
         .signWith(privateKey, SignatureAlgorithm.HS256)
@@ -25,7 +25,7 @@ public abstract class JWT {
     ctx.cookie("session", session);
   }
 
-  public static Long getSession(Context ctx) {
+  public static Long get(Context ctx) {
     String session = ctx.cookie("session");
     if (session == null) return null;
     try {
@@ -42,7 +42,7 @@ public abstract class JWT {
     }
   }
 
-  public static void clearSession(Context ctx) {
+  public static void clear(Context ctx) {
     ctx.removeCookie("session");
   }
 
