@@ -8,6 +8,7 @@ import org.example.repository.UserRepository;
 
 import java.time.LocalDate;
 
+import static io.javalin.core.util.FileUtil.streamToFile;
 import static io.javalin.plugin.rendering.template.TemplateUtil.model;
 
 public class ProfileController extends BaseController {
@@ -37,7 +38,6 @@ public class ProfileController extends BaseController {
 
   public void editUserProfile(Context ctx) {
     try {
-      UploadedFile photo = getUploadedFile(ctx, "photo");
       User user = new User(
           ctx.formParamAsClass("firstName", String.class).get(),
           ctx.formParamAsClass("lastName", String.class).get(),
@@ -46,11 +46,12 @@ public class ProfileController extends BaseController {
           ctx.formParamAsClass("email", String.class).get()
       );
       user.setId(ctx.formParamAsClass("id", Long.class).get());
+      UploadedFile photo = ctx.uploadedFile("photo");
 
       entityManager().getTransaction().begin();
       this.users.update(user);
-      if (photo.getSize() > 0) {
-        saveFile(photo, user.getId() + ".jpg");
+      if (photo != null && photo.getSize() > 0) {
+        streamToFile(photo.getContent(), "static/images/" + user.getId() + ".jpg");
       }
       entityManager().getTransaction().commit();
 
