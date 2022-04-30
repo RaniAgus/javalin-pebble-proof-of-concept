@@ -16,14 +16,6 @@ public class Post {
   private Integer likes;
   private String details;
 
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
   public Post() {
   }
 
@@ -32,6 +24,14 @@ public class Post {
     this.date = date;
     this.likes = likes;
     this.details = details;
+  }
+
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
   }
 
   public User getUser() {
