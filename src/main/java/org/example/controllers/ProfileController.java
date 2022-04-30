@@ -3,27 +3,33 @@ package org.example.controllers;
 import io.javalin.http.Context;
 import io.javalin.http.UploadedFile;
 import org.example.data.User;
-import org.example.service.UserService;
+import org.example.repository.UserRepository;
 
 import java.time.LocalDate;
 
 import static io.javalin.plugin.rendering.template.TemplateUtil.model;
 
 public class ProfileController extends BaseController {
-  private final UserService userService;
+  private final UserRepository users;
 
-  public ProfileController(UserService userService) {
-    this.userService = userService;
+  public ProfileController(UserRepository userRepository) {
+    this.users = userRepository;
   }
 
   public void getUserProfile(Context ctx) {
     Long id = ctx.pathParamAsClass("id", Long.class).get();
-    render(ctx, "profile.peb", model("user", this.userService.getUser(id)));
+    ctx.render("profile.peb", model(
+        "userId", getSession(ctx),
+        "user", this.users.getById(id)
+    ));
   }
 
   public void getEditUserProfileForm(Context ctx) {
     Long id = ctx.pathParamAsClass("id", Long.class).get();
-    render(ctx, "profile-edit.peb", model("user", this.userService.getUser(id)));
+    ctx.render("profile-edit.peb", model(
+        "userId", getSession(ctx),
+        "user", this.users.getById(id)
+    ));
   }
 
   public void editUserProfile(Context ctx) {
@@ -37,7 +43,13 @@ public class ProfileController extends BaseController {
     );
     user.setId(ctx.formParamAsClass("id", Long.class).get());
 
-    this.userService.editUserProfile(user, photo);
+    entityManager().getTransaction().begin();
+    this.users.update(user);
+    if (photo.getSize() > 0) {
+      saveFile(photo, user.getId() + ".jpg");
+    }
+    entityManager().getTransaction().commit();
+
     ctx.redirect("/profiles/" + user.getId());
   }
 }

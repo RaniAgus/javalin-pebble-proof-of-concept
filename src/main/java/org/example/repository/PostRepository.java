@@ -6,7 +6,7 @@ import org.uqbarproject.jpa.java8.extras.WithGlobalEntityManager;
 import java.util.List;
 
 public class PostRepository implements WithGlobalEntityManager {
-  public List<Post> getPosts() {
+  public List<Post> getAll() {
     return entityManager()
         .createQuery("from Post", Post.class)
         .getResultList();

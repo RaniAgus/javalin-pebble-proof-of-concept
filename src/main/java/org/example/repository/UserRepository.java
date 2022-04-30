@@ -6,12 +6,12 @@ import org.uqbarproject.jpa.java8.extras.WithGlobalEntityManager;
 import java.util.Optional;
 
 public class UserRepository implements WithGlobalEntityManager {
-  public User getUser(Long id) {
+  public User getById(Long id) {
     return Optional.ofNullable(entityManager().find(User.class, id))
         .orElseThrow(() -> new UserNotFoundException(id));
   }
 
-  public User getUserByEmail(String email) {
+  public User getByEmail(String email) {
     return entityManager()
         .createQuery("from User u where u.email like :email", User.class)
         .setParameter("email", "%" + email + "%")
@@ -20,10 +20,14 @@ public class UserRepository implements WithGlobalEntityManager {
         .orElseThrow(() -> new UserNotFoundException(email));
   }
 
-  public void putUser(User user) {
-    if (entityManager().find(User.class, user.getId()) == null) {
+  public void update(User user) {
+    if (!exists(user.getId())) {
       throw new UserNotFoundException(user.getId());
     }
     entityManager().merge(user);
+  }
+
+  private boolean exists(Long id) {
+    return entityManager().find(User.class, id) != null;
   }
 }

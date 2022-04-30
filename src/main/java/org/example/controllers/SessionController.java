@@ -1,22 +1,21 @@
 package org.example.controllers;
 
 import io.javalin.http.Context;
-import org.example.auth.JWT;
 import org.example.data.User;
 import org.example.repository.UserNotFoundException;
-import org.example.service.UserService;
+import org.example.repository.UserRepository;
 
 import static io.javalin.plugin.rendering.template.TemplateUtil.model;
 
 public class SessionController extends BaseController {
-  private final UserService userService;
+  private final UserRepository users;
 
-  public SessionController(UserService userService) {
-    this.userService = userService;
+  public SessionController(UserRepository users) {
+    this.users = users;
   }
 
   public void getLogin(Context ctx) {
-    render(ctx, "login.peb", model(
+    ctx.render("login.peb", model(
         "origin", ctx.queryParam("origin"),
         "error", ctx.queryParamAsClass("error", Boolean.class).allowNullable().get()
     ));
@@ -25,11 +24,11 @@ public class SessionController extends BaseController {
   public void login(Context ctx) {
     try {
       String email = ctx.formParamAsClass("email", String.class).get();
-      User user = this.userService.getUserByEmail(email);
+      User user = this.users.getByEmail(email);
 
       // TODO: Check user password
 
-      ctx.cookie("session", JWT.sign(user.getId()));
+      setSession(ctx, user.getId());
       ctx.redirect("/" + ctx.formParam("origin"));
     } catch (UserNotFoundException e) {
       ctx.redirect("/login?error=true");
@@ -37,7 +36,7 @@ public class SessionController extends BaseController {
   }
 
   public void logout(Context ctx) {
-    ctx.removeCookie("session");
+    unsetSession(ctx);
     ctx.redirect("/");
   }
 }
