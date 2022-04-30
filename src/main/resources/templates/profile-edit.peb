@@ -55,13 +55,13 @@
         </dt>
         <dd>
           <select class="form-control" name="gender" id="gender" required>
-            <option value="Male" {% if user.gender == "Male" %} selected {% endif %}>
+            <option value="Male" {% if user.gender equals 'Male' %} selected {% endif %}>
               Male
             </option>
-            <option value="Female" {% if user.gender == "Female" %} selected {% endif %}>
+            <option value="Female" {% if user.gender equals 'Female' %} selected {% endif %}>
               Female
             </option>
-            <option value="Other" {% if user.gender == "Other" %} selected {% endif %}>
+            <option value="Other" {% if user.gender equals 'Other' %} selected {% endif %}>
               Other
             </option>
           </select>

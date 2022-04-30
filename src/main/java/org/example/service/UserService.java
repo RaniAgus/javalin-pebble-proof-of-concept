@@ -18,6 +18,10 @@ public class UserService implements WithGlobalEntityManager, TransactionalOps {
     return this.userRepository.getUser(id);
   }
 
+  public User getUserByEmail(String email) {
+    return this.userRepository.getUserByEmail(email);
+  }
+
   public void editUserProfile(User user, UploadedFile photo) {
     entityManager().getTransaction().begin();
     this.userRepository.putUser(user);
@@ -29,5 +33,4 @@ public class UserService implements WithGlobalEntityManager, TransactionalOps {
     }
     entityManager().getTransaction().commit();
   }
-
 }

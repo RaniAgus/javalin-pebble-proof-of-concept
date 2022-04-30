@@ -5,7 +5,7 @@ import org.example.service.PostService;
 
 import static io.javalin.plugin.rendering.template.TemplateUtil.model;
 
-public class HomeController extends BaseRepository {
+public class HomeController extends BaseController {
   private final PostService postService;
 
   public HomeController(PostService postService) {
@@ -13,6 +13,6 @@ public class HomeController extends BaseRepository {
   }
 
   public void getUserListing(Context ctx) {
-    ctx.render("home.peb", model("posts", this.postService.getPosts()));
+    render(ctx, "home.peb", model("posts", this.postService.getPosts()));
   }
 }

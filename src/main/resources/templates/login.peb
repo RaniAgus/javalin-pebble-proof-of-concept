@@ -1,0 +1,34 @@
+{# @pebvariable name="origin" type="String" #}
+{# @pebvariable name="error" type="boolean" #}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script defer src="/js/bootstrap.min.js"></script>
+  <title>Pebble Spring Example</title>
+</head>
+<body>
+
+<div class="container">
+  <form class="form-signin" action="/login" method="post">
+    <h2 class="form-signin-heading">Sign in</h2>
+    <label for="email" class="sr-only">Email address</label>
+    <input class="form-control" type="email" id="email" name="email"
+           placeholder="Email address" required autofocus>
+    <label for="password" class="sr-only">Password</label>
+    <input class="form-control" type="password" id="password" name="password"
+           placeholder="Password" required>
+    <input type="hidden" name="origin" value="{{ origin }}">
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Log in</button>
+    {% if error %}
+      <div class="alert alert-danger" role="alert">
+        Wrong username or password.
+      </div>
+    {% endif %}
+  </form>
+</div> <!-- /container -->
+
+</body>
+</html>

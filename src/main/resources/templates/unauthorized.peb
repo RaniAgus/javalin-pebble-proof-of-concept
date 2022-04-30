@@ -1,0 +1,8 @@
+{% extends 'layout/base.peb' %}
+{% set activeNav = '' %}
+
+{% block content %}
+  <h1>401</h1>
+  <p>You're not allowed to see this.</p>
+  <a href="/home">Take me home</a>
+{% endblock content %}

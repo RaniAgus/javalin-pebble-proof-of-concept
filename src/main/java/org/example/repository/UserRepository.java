@@ -11,7 +11,19 @@ public class UserRepository implements WithGlobalEntityManager {
         .orElseThrow(() -> new UserNotFoundException(id));
   }
 
+  public User getUserByEmail(String email) {
+    return entityManager()
+        .createQuery("from User u where u.email like :email", User.class)
+        .setParameter("email", "%" + email + "%")
+        .getResultList().stream()
+        .findFirst()
+        .orElseThrow(() -> new UserNotFoundException(email));
+  }
+
   public void putUser(User user) {
+    if (entityManager().find(User.class, user.getId()) == null) {
+      throw new UserNotFoundException(user.getId());
+    }
     entityManager().merge(user);
   }
 }

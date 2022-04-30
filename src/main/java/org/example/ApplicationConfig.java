@@ -7,6 +7,7 @@ import io.javalin.core.validation.JavalinValidation;
 import io.javalin.http.staticfiles.Location;
 import io.javalin.plugin.rendering.JavalinRenderer;
 import io.javalin.plugin.rendering.template.JavalinPebble;
+import org.example.auth.SessionManager;
 import org.example.validators.LocalDateValidator;
 
 import java.time.LocalDate;
@@ -16,6 +17,7 @@ public class ApplicationConfig implements Consumer<JavalinConfig> {
   @Override
   public void accept(JavalinConfig javalinConfig) {
     javalinConfig.addStaticFiles("static", Location.EXTERNAL);
+    javalinConfig.accessManager(new SessionManager());
     JavalinRenderer.register(JavalinPebble.INSTANCE, ".peb");
     JavalinPebble.configure(configureEngine());
     JavalinValidation.register(LocalDate.class, new LocalDateValidator());
@@ -28,7 +30,6 @@ public class ApplicationConfig implements Consumer<JavalinConfig> {
 
     return new PebbleEngine.Builder()
         .loader(classpathLoader)
-        .strictVariables(true)
         .build();
   }
 

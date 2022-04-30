@@ -9,7 +9,7 @@ import java.time.LocalDate;
 
 import static io.javalin.plugin.rendering.template.TemplateUtil.model;
 
-public class ProfileController extends BaseRepository {
+public class ProfileController extends BaseController {
   private final UserService userService;
 
   public ProfileController(UserService userService) {
@@ -18,12 +18,12 @@ public class ProfileController extends BaseRepository {
 
   public void getUserProfile(Context ctx) {
     Long id = ctx.pathParamAsClass("id", Long.class).get();
-    ctx.render("profile.peb", model("user", this.userService.getUser(id)));
+    render(ctx, "profile.peb", model("user", this.userService.getUser(id)));
   }
 
   public void getEditUserProfileForm(Context ctx) {
     Long id = ctx.pathParamAsClass("id", Long.class).get();
-    ctx.render("profile-edit.peb", model("user", this.userService.getUser(id)));
+    render(ctx, "profile-edit.peb", model("user", this.userService.getUser(id)));
   }
 
   public void editUserProfile(Context ctx) {
