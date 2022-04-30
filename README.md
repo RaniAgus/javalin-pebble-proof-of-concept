@@ -11,3 +11,7 @@ Example Application using Javalin + Pebble. Templates were extracted from
 - Add syntax highlighting `HTML` to the `.peb` templates.
 
 ![image](https://user-images.githubusercontent.com/39303639/164774184-352aa3ad-429d-4c86-92ac-aaf64bfbcfd0.png)
+
+- Run `org.example.Application` with `APP_SECRET` environment variable.
+
+![image](https://user-images.githubusercontent.com/39303639/166094243-bc158a02-21c2-4a3f-bd65-ac4758c41130.png)
