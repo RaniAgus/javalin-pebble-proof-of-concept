@@ -1,5 +1,6 @@
 package org.example.controllers;
 
+import io.javalin.core.validation.ValidationException;
 import io.javalin.http.Context;
 import io.javalin.http.UploadedFile;
 import org.example.data.User;
@@ -28,28 +29,35 @@ public class ProfileController extends BaseController {
     Long id = ctx.pathParamAsClass("id", Long.class).get();
     ctx.render("profile-edit.peb", model(
         "userId", getSession(ctx),
-        "user", this.users.getById(id)
+        "user", this.users.getById(id),
+        "now", LocalDate.now(),
+        "error", ctx.queryParam("error")
     ));
   }
 
   public void editUserProfile(Context ctx) {
-    UploadedFile photo = getUploadedFile(ctx, "photo");
-    User user = new User(
-        ctx.formParamAsClass("firstName", String.class).get(),
-        ctx.formParamAsClass("lastName", String.class).get(),
-        ctx.formParamAsClass("birthday", LocalDate.class).allowNullable().get(),
-        ctx.formParamAsClass("gender", String.class).get(),
-        ctx.formParamAsClass("email", String.class).get()
-    );
-    user.setId(ctx.formParamAsClass("id", Long.class).get());
+    try {
+      UploadedFile photo = getUploadedFile(ctx, "photo");
+      User user = new User(
+          ctx.formParamAsClass("firstName", String.class).get(),
+          ctx.formParamAsClass("lastName", String.class).get(),
+          ctx.formParamAsClass("birthday", LocalDate.class).allowNullable().get(),
+          ctx.formParamAsClass("gender", String.class).get(),
+          ctx.formParamAsClass("email", String.class).get()
+      );
+      user.setId(ctx.formParamAsClass("id", Long.class).get());
 
-    entityManager().getTransaction().begin();
-    this.users.update(user);
-    if (photo.getSize() > 0) {
-      saveFile(photo, user.getId() + ".jpg");
+      entityManager().getTransaction().begin();
+      this.users.update(user);
+      if (photo.getSize() > 0) {
+        saveFile(photo, user.getId() + ".jpg");
+      }
+      entityManager().getTransaction().commit();
+
+      ctx.redirect("/profiles/" + user.getId());
+
+    } catch (ValidationException e) {
+      ctx.redirect("/profiles/" + ctx.pathParam("id") + "/edit?error=true");
     }
-    entityManager().getTransaction().commit();
-
-    ctx.redirect("/profiles/" + user.getId());
   }
 }

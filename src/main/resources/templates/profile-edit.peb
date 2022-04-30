@@ -1,4 +1,6 @@
 {# @pebvariable name="user" type="org.example.data.User" #}
+{# @pebvariable name="now" type="java.time.LocalDate" #}
+{# @pebvariable name="error" type="java.lang.String" #}
 
 {% extends 'layout.peb' %}
 {% set activeNav = 'profile' %}
@@ -43,15 +45,14 @@
           <input class="form-control" type="text" name="id" id="id"
                  value="{{ user.id }}" readonly>
         </dd>
-
         <dt>
           <label for="birthday">Birthday</label>
         </dt>
         <dd>
           <input class="form-control" type="date" name="birthday" id="birthday"
-                 value="{{ user.birthday | date("yyyy-MM-dd") | default("-") }}">
+                 max="{{ now | date("yyyy-MM-dd") }}"
+                 value="{{ user.birthday | date("yyyy-MM-dd") | default("") }}">
         </dd>
-
         <dt>
           <label for="gender">Gender</label>
         </dt>
@@ -68,7 +69,6 @@
             </option>
           </select>
         </dd>
-
         <dt>
           <label for="email">Email</label>
         </dt>
@@ -79,6 +79,14 @@
       </dl>
     </div>
   </div>
+  {% if error %}
+    <div class="row">
+      <div class="alert alert-danger" role="alert">
+        <strong>Something went wrong!</strong>
+        We couldn't update your user profile. Change a few things up and try submitting again.
+      </div>
+    </div>
+  {% endif %}
   <div class="row">
     <div class="col-md-12 text-right">
       <a href="/profiles/{{ user.id }}" class="btn btn-secondary">Cancel</a>
