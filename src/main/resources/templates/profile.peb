@@ -1,7 +1,7 @@
 {# @pebvariable name="userId" type="String" #}
 {# @pebvariable name="user" type="org.example.data.User" #}
 
-{% if user.id.toString() equals userId %}
+{% if user.id equals userId %}
   {% set activeNav = 'profile' %}
 {% endif %}
 
@@ -39,7 +39,7 @@
     </div>
   </div>
   <div class="row">
-    {% if user.id.toString() equals userId %}
+    {% if user.id equals userId %}
       <div class="col-md-12 text-right">
         <a href="/profiles/{{ user.id }}/edit" class="btn btn-primary" type="submit">Edit profile</a>
       </div>
