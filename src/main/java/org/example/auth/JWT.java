@@ -1,5 +1,6 @@
 package org.example.auth;
 
+import io.javalin.http.Context;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 
@@ -14,21 +15,24 @@ public abstract class JWT {
       System.getenv("APP_SECRET").getBytes(StandardCharsets.UTF_8)
   );
 
-  public static String sign(Long userId) {
-    return Jwts.builder()
+  public static void setSession(Context ctx, Long userId) {
+    String session = Jwts.builder()
         .setSubject(userId.toString())
         .signWith(privateKey, SignatureAlgorithm.HS256)
-        .setExpiration(getDateFrom(LocalDate.now().plusMonths(6)))
+        .setExpiration(date(LocalDate.now().plusMonths(6)))
         .compact();
+
+    ctx.cookie("session", session);
   }
 
-  public static Long verify(String jwtString) {
-    if (jwtString == null) return null;
+  public static Long getSession(Context ctx) {
+    String session = ctx.cookie("session");
+    if (session == null) return null;
     try {
       String userId = Jwts.parserBuilder()
           .setSigningKey(privateKey)
           .build()
-          .parseClaimsJws(jwtString)
+          .parseClaimsJws(session)
           .getBody()
           .getSubject();
 
@@ -38,7 +42,11 @@ public abstract class JWT {
     }
   }
 
-  private static Date getDateFrom(LocalDate localDate) {
+  public static void clearSession(Context ctx) {
+    ctx.removeCookie("session");
+  }
+
+  private static Date date(LocalDate localDate) {
     return Date.from(localDate.atStartOfDay().toInstant(ZoneOffset.UTC));
   }
 }

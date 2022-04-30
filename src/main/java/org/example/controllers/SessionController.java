@@ -1,13 +1,14 @@
 package org.example.controllers;
 
 import io.javalin.http.Context;
+import org.example.auth.JWT;
 import org.example.data.User;
 import org.example.repository.UserNotFoundException;
 import org.example.repository.UserRepository;
 
 import static io.javalin.plugin.rendering.template.TemplateUtil.model;
 
-public class SessionController extends BaseController {
+public class SessionController {
   private final UserRepository users;
 
   public SessionController(UserRepository users) {
@@ -27,8 +28,8 @@ public class SessionController extends BaseController {
       User user = this.users.getByEmail(email);
 
       // TODO: Check user password
+      JWT.setSession(ctx, user.getId());
 
-      setSession(ctx, user.getId());
       ctx.redirect("/" + ctx.formParam("origin"));
     } catch (UserNotFoundException e) {
       ctx.redirect("/login?error=true");
@@ -36,7 +37,7 @@ public class SessionController extends BaseController {
   }
 
   public void logout(Context ctx) {
-    unsetSession(ctx);
+    JWT.clearSession(ctx);
     ctx.redirect("/");
   }
 }

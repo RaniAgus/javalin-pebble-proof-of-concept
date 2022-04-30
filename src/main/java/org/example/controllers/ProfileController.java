@@ -3,15 +3,18 @@ package org.example.controllers;
 import io.javalin.core.validation.ValidationException;
 import io.javalin.http.Context;
 import io.javalin.http.UploadedFile;
+import org.example.auth.JWT;
 import org.example.data.User;
 import org.example.repository.UserRepository;
+import org.uqbarproject.jpa.java8.extras.WithGlobalEntityManager;
+import org.uqbarproject.jpa.java8.extras.transaction.TransactionalOps;
 
 import java.time.LocalDate;
 
 import static io.javalin.core.util.FileUtil.streamToFile;
 import static io.javalin.plugin.rendering.template.TemplateUtil.model;
 
-public class ProfileController extends BaseController {
+public class ProfileController implements WithGlobalEntityManager, TransactionalOps {
   private final UserRepository users;
 
   public ProfileController(UserRepository userRepository) {
@@ -21,7 +24,7 @@ public class ProfileController extends BaseController {
   public void getUserProfile(Context ctx) {
     Long id = ctx.pathParamAsClass("id", Long.class).get();
     ctx.render("profile.peb", model(
-        "userId", getSession(ctx),
+        "userId", JWT.getSession(ctx),
         "user", this.users.getById(id)
     ));
   }
@@ -29,7 +32,7 @@ public class ProfileController extends BaseController {
   public void getEditUserProfileForm(Context ctx) {
     Long id = ctx.pathParamAsClass("id", Long.class).get();
     ctx.render("profile-edit.peb", model(
-        "userId", getSession(ctx),
+        "userId", JWT.getSession(ctx),
         "user", this.users.getById(id),
         "now", LocalDate.now(),
         "error", ctx.queryParam("error")
