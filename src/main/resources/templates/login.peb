@@ -9,7 +9,7 @@
   <script defer src="/js/bootstrap.min.js"></script>
   <title>Pebble Spring Example</title>
 </head>
-<body>
+<body class="body-signin">
 
 <div class="container">
   <form class="form-signin" action="/login" method="post">
