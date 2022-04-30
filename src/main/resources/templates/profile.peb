@@ -1,8 +1,12 @@
 {# @pebvariable name="userId" type="String" #}
 {# @pebvariable name="user" type="org.example.data.User" #}
 
-{% extends 'layout/base.peb' %}
+{% extends 'layout/layout.peb' %}
 {% set activeNav = 'profile' %}
+
+{% block title %}
+  {{ user.firstName | capitalize }} {{ user.lastName }} - Social Network
+{% endblock %}
 
 {% block content %}
 

@@ -1,21 +1,13 @@
 {# @pebvariable name="userId" type="String" #}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <link rel="stylesheet" href="/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="/css/style.css" />
-  <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-  <script defer src="/js/bootstrap.min.js"></script>
-  <title>Pebble Spring Example</title>
-</head>
+
+{% extends 'base.peb' %}
+
+{% block body %}
 <body id="page-container">
 
 <div id="wrap">
-
   {% include 'layout/navbar.peb' %}
-
   <div class="container">
-
     <div class="row">
       <div class="col-md-3">
         {% if userId is not empty %}
@@ -28,12 +20,9 @@
         {% endblock content %}
       </div>
     </div>
-
   </div><!-- end container -->
-
 </div><!-- end wrap -->
-
 {% include 'layout/footer.peb' %}
 
 </body>
-</html>
+{% endblock %}

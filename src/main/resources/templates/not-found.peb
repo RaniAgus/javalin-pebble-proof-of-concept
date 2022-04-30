@@ -1,5 +1,7 @@
-{% extends 'layout/base.peb' %}
+{% extends 'layout/layout.peb' %}
 {% set activeNav = '' %}
+
+{% block title %} Page Not Found {% endblock %}
 
 {% block content %}
   <h1>404</h1>

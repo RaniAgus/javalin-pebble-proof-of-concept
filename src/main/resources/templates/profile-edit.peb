@@ -1,7 +1,9 @@
 {# @pebvariable name="user" type="org.example.data.User" #}
 
-{% extends 'layout/base.peb' %}
+{% extends 'layout/layout.peb' %}
 {% set activeNav = 'profile' %}
+
+{% block title %} Edit Profile - Social Network {% endblock %}
 
 {% block content %}
 
