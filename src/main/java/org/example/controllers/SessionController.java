@@ -31,7 +31,7 @@ public class SessionController {
 
       ctx.redirect("/" + ctx.formParam("origin"));
     } catch (UserNotFoundException e) {
-      ctx.redirect("/login?error=true");
+      ctx.status(401).redirect("/login?error=true");
     }
   }
 

@@ -16,7 +16,7 @@ public enum SessionRole implements RouteRole {
     boolean verify(Handler handler, Context ctx) {
       Long userId = ctx.sessionAttribute("userId");
       if (userId == null) {
-        ctx.redirect(
+        ctx.status(403).redirect(
             "/login?origin=" + ctx.path()
                 .substring(1)
                 .replace("/", "%2F")
