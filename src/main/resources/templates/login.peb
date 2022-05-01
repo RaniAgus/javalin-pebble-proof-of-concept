@@ -1,5 +1,5 @@
 {# @pebvariable name="origin" type="String" #}
-{# @pebvariable name="error" type="boolean" #}
+{# @pebvariable name="error" type="String" #}
 
 {% extends 'base.peb' %}
 

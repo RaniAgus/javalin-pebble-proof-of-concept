@@ -18,7 +18,7 @@ public class SessionController {
   public void getLogin(Context ctx) {
     ctx.render("login.peb", model(
         "origin", ctx.queryParam("origin"),
-        "error", ctx.queryParamAsClass("error", Boolean.class).allowNullable().get()
+        "error", ctx.queryParam("error")
     ));
   }
 
