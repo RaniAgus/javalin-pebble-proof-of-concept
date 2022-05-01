@@ -22,11 +22,11 @@ public abstract class SessionToken {
         .setExpiration(date(LocalDate.now().plusMonths(6)))
         .compact();
 
-    ctx.cookie("session", session);
+    ctx.sessionAttribute("session", session);
   }
 
   public static Long get(Context ctx) {
-    String session = ctx.cookie("session");
+    String session = ctx.sessionAttribute("session");
     if (session == null) return null;
     try {
       String userId = Jwts.parserBuilder()
@@ -43,7 +43,7 @@ public abstract class SessionToken {
   }
 
   public static void clear(Context ctx) {
-    ctx.removeCookie("session");
+    ctx.consumeSessionAttribute("session");
   }
 
   private static Date date(LocalDate localDate) {
