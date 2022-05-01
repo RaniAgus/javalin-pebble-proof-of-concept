@@ -8,6 +8,10 @@ import org.example.controllers.SessionController;
 import org.example.repository.UserNotFoundException;
 import org.example.repository.PostRepository;
 import org.example.repository.UserRepository;
+import org.uqbarproject.jpa.java8.extras.PerThreadEntityManagers;
+
+import static org.uqbarproject.jpa.java8.extras.PerThreadEntityManagers.closeEntityManager;
+import static org.uqbarproject.jpa.java8.extras.PerThreadEntityManagers.getEntityManager;
 
 public class Application {
   // Repository layer
@@ -36,5 +40,10 @@ public class Application {
     app.exception(UserNotFoundException.class, (e, ctx) -> ctx.status(404));
     app.error(401, "html", ctx -> ctx.render("unauthorized.peb"));
     app.error(404, "html", ctx -> ctx.render("not-found.peb"));
+    app.after(ctx -> {
+      if (getEntityManager().isOpen()) {
+        closeEntityManager();
+      }
+    });
   }
 }
