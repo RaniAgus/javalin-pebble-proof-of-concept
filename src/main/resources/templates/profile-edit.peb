@@ -10,7 +10,7 @@
 {% block content %}
 
 <form class="profile form-group"
-      enctype="multipart/form-data" action="/profiles/{{ user.id }}/edit" method="post" >
+      enctype="multipart/form-data" action="/profiles/me" method="post" >
   <div class="row">
     <div class="col-md-6">
       <label for="firstName">First Name</label>

@@ -20,25 +20,33 @@ public class ProfileController implements WithGlobalEntityManager, Transactional
     this.users = userRepository;
   }
 
-  public void getUserProfile(Context ctx) {
-    Long id = ctx.pathParamAsClass("id", Long.class).get();
+  private void getUserProfile(Context ctx, Long id) {
     ctx.render("profile.peb", model(
         "userId", ctx.sessionAttribute("userId"),
         "user", this.users.getById(id)
     ));
   }
 
+  public void getUserProfileByPath(Context ctx) {
+    this.getUserProfile(ctx, ctx.pathParamAsClass("id", Long.class).get());
+  }
+
+  public void getUserProfileBySession(Context ctx) {
+    this.getUserProfile(ctx, ctx.sessionAttribute("userId"));
+  }
+
   public void getEditUserProfileForm(Context ctx) {
-    Long id = ctx.pathParamAsClass("id", Long.class).get();
+    Long userId = ctx.sessionAttribute("userId");
     ctx.render("profile-edit.peb", model(
         "userId", ctx.sessionAttribute("userId"),
-        "user", this.users.getById(id),
+        "user", this.users.getById(userId),
         "now", LocalDate.now(),
         "error", ctx.queryParam("error")
     ));
   }
 
   public void editUserProfile(Context ctx) {
+    Long userId = ctx.sessionAttribute("userId");
     try {
       User user = new User(
           ctx.formParamAsClass("firstName", String.class).get(),
@@ -47,22 +55,22 @@ public class ProfileController implements WithGlobalEntityManager, Transactional
           ctx.formParamAsClass("gender", String.class).get(),
           ctx.formParamAsClass("email", String.class).get()
       );
-      user.setId(ctx.formParamAsClass("id", Long.class).get());
+      user.setId(userId);
       UploadedFile photo = ctx.uploadedFile("photo");
 
       entityManager().getTransaction().begin();
       this.users.update(user);
       if (photo != null && photo.getSize() > 0) {
-        streamToFile(photo.getContent(), "static/images/" + user.getId() + ".jpg");
+        streamToFile(photo.getContent(), "static/images/" + userId + ".jpg");
       }
       entityManager().getTransaction().commit();
 
-      ctx.redirect("/profiles/" + user.getId());
+      ctx.redirect("/profiles/" + userId);
 
     } catch (ValidationException e) {
-      ctx.status(400).redirect("/profiles/" + ctx.pathParam("id") + "/edit?error=true");
+      ctx.status(400).redirect("/profiles/" + userId + "/edit?error=true");
     } catch (Exception e) {
-      ctx.status(500).redirect("/profiles/" + ctx.pathParam("id") + "/edit?error=true");
+      ctx.status(500).redirect("/profiles/" + userId + "/edit?error=true");
     }
   }
 }

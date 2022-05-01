@@ -41,7 +41,7 @@
   <div class="row">
     {% if user.id equals userId %}
       <div class="col-md-12 text-right">
-        <a href="/profiles/{{ user.id }}/edit" class="btn btn-primary" type="submit">Edit profile</a>
+        <a href="/profiles/me/edit" class="btn btn-primary" type="submit">Edit profile</a>
       </div>
     {% endif %}
   </div>

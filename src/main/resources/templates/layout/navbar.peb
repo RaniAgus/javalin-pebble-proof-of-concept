@@ -13,7 +13,7 @@
         </li>
         {% if userId is not null %}
           <li class="{% if activeNav equals 'profile' %} active {% endif %}">
-            <a href="/profiles/{{ userId }}">My Profile</a>
+            <a href="/profiles/me">My Profile</a>
           </li>
         {% endif %}
       </ul>

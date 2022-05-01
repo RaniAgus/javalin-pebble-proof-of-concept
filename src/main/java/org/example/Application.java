@@ -36,12 +36,13 @@ public class Application {
         get(SESSION_CONTROLLER::getLogin, SessionRole.NOT_LOGGED_IN);
         post(SESSION_CONTROLLER::login, SessionRole.NOT_LOGGED_IN);
       });
-      path("profiles/{id}", () -> {
-        get(PROFILE_CONTROLLER::getUserProfile);
-        path("edit", () -> {
-          get(PROFILE_CONTROLLER::getEditUserProfileForm, SessionRole.LOGGED_IN);
+      path("profiles", () -> {
+        path("me", () -> {
+          get(PROFILE_CONTROLLER::getUserProfileBySession, SessionRole.LOGGED_IN);
           post(PROFILE_CONTROLLER::editUserProfile, SessionRole.LOGGED_IN);
+          get("edit", PROFILE_CONTROLLER::getEditUserProfileForm, SessionRole.LOGGED_IN);
         });
+        get("{id}", PROFILE_CONTROLLER::getUserProfileByPath);
       });
     });
     app.exception(UserNotFoundException.class, (e, ctx) -> ctx.status(404));
