@@ -3,7 +3,6 @@ package org.example.controllers;
 import io.javalin.core.validation.ValidationException;
 import io.javalin.http.Context;
 import io.javalin.http.UploadedFile;
-import org.example.auth.SessionToken;
 import org.example.data.User;
 import org.example.repository.UserRepository;
 import org.uqbarproject.jpa.java8.extras.WithGlobalEntityManager;
@@ -24,7 +23,7 @@ public class ProfileController implements WithGlobalEntityManager, Transactional
   public void getUserProfile(Context ctx) {
     Long id = ctx.pathParamAsClass("id", Long.class).get();
     ctx.render("profile.peb", model(
-        "userId", SessionToken.get(ctx),
+        "userId", ctx.sessionAttribute("userId"),
         "user", this.users.getById(id)
     ));
   }
@@ -32,7 +31,7 @@ public class ProfileController implements WithGlobalEntityManager, Transactional
   public void getEditUserProfileForm(Context ctx) {
     Long id = ctx.pathParamAsClass("id", Long.class).get();
     ctx.render("profile-edit.peb", model(
-        "userId", SessionToken.get(ctx),
+        "userId", ctx.sessionAttribute("userId"),
         "user", this.users.getById(id),
         "now", LocalDate.now(),
         "error", ctx.queryParam("error")

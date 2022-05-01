@@ -1,7 +1,6 @@
 package org.example.controllers;
 
 import io.javalin.http.Context;
-import org.example.auth.SessionToken;
 import org.example.data.User;
 import org.example.repository.UserNotFoundException;
 import org.example.repository.UserRepository;
@@ -28,7 +27,7 @@ public class SessionController {
       User user = this.users.getByEmail(email);
 
       // TODO: Check user password
-      SessionToken.set(ctx, user.getId());
+      ctx.sessionAttribute("userId", user.getId());
 
       ctx.redirect("/" + ctx.formParam("origin"));
     } catch (UserNotFoundException e) {
@@ -37,7 +36,7 @@ public class SessionController {
   }
 
   public void logout(Context ctx) {
-    SessionToken.clear(ctx);
+    ctx.consumeSessionAttribute("userId");
     ctx.redirect("/");
   }
 }

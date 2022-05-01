@@ -8,7 +8,6 @@ import org.example.controllers.SessionController;
 import org.example.repository.UserNotFoundException;
 import org.example.repository.PostRepository;
 import org.example.repository.UserRepository;
-import org.uqbarproject.jpa.java8.extras.PerThreadEntityManagers;
 
 import static org.uqbarproject.jpa.java8.extras.PerThreadEntityManagers.closeEntityManager;
 import static org.uqbarproject.jpa.java8.extras.PerThreadEntityManagers.getEntityManager;
