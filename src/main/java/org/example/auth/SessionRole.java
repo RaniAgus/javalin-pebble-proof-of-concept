@@ -2,18 +2,17 @@ package org.example.auth;
 
 import io.javalin.core.security.RouteRole;
 import io.javalin.http.Context;
-import io.javalin.http.Handler;
 
 public enum SessionRole implements RouteRole {
-  NONE {
+  ANYONE {
     @Override
-    boolean verify(Handler handler, Context ctx) {
-      return false;
+    boolean verify(Context ctx) {
+      return true;
     }
   },
   LOGGED_IN {
     @Override
-    boolean verify(Handler handler, Context ctx) {
+    boolean verify(Context ctx) {
       Long userId = ctx.sessionAttribute("userId");
       if (userId == null) {
         ctx.status(403).redirect(
@@ -23,26 +22,19 @@ public enum SessionRole implements RouteRole {
         );
         return false;
       }
-
-      if (!ctx.pathParam("id").equals(userId.toString())) {
-        ctx.status(401);
-        return false;
-      }
-
       return true;
     }
   },
   NOT_LOGGED_IN {
     @Override
-    boolean verify(Handler handler, Context ctx) {
+    boolean verify(Context ctx) {
       if (ctx.sessionAttribute("userId") != null) {
-        ctx.redirect("/" + ctx.queryParam("origin"));
+        ctx.redirect("/");
         return false;
       }
-
       return true;
     }
   };
 
-  abstract boolean verify(Handler handler, Context ctx) throws Exception;
+  abstract boolean verify(Context ctx);
 }

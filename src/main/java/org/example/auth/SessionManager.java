@@ -13,8 +13,9 @@ public class SessionManager implements AccessManager {
   public void manage(@NotNull Handler handler,
                      @NotNull Context ctx,
                      @NotNull Set<RouteRole> roles) throws Exception {
-    SessionRole role = (SessionRole) roles.stream().findFirst().orElse(null);
-    if (role != null && !role.verify(handler, ctx)) {
+    SessionRole role = (SessionRole) roles.stream().findFirst()
+        .orElse(SessionRole.ANYONE);
+    if (!role.verify(ctx)) {
       return;
     }
 
