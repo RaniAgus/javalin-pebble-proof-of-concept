@@ -9,6 +9,7 @@ import org.example.repository.UserNotFoundException;
 import org.example.repository.PostRepository;
 import org.example.repository.UserRepository;
 
+import static io.javalin.apibuilder.ApiBuilder.*;
 import static org.uqbarproject.jpa.java8.extras.PerThreadEntityManagers.closeEntityManager;
 import static org.uqbarproject.jpa.java8.extras.PerThreadEntityManagers.getEntityManager;
 
@@ -29,13 +30,20 @@ public class Application {
 
     app.get("/", ctx -> ctx.redirect("/home"));
     app.get("/home", HOME_CONTROLLER::getUserListing);
-    app.get("/login", SESSION_CONTROLLER::getLogin, SessionRole.NOT_LOGGED_IN);
-    app.post("/login", SESSION_CONTROLLER::login, SessionRole.NOT_LOGGED_IN);
     app.get("/logout", SESSION_CONTROLLER::logout);
-    app.get("/profiles/{id}", PROFILE_CONTROLLER::getUserProfile);
-    app.get("/profiles/{id}/edit", PROFILE_CONTROLLER::getEditUserProfileForm, SessionRole.LOGGED_IN);
-    app.post("/profiles/{id}", PROFILE_CONTROLLER::editUserProfile, SessionRole.LOGGED_IN);
-
+    app.routes(() -> {
+      path("login", () -> {
+        get(SESSION_CONTROLLER::getLogin, SessionRole.NOT_LOGGED_IN);
+        post(SESSION_CONTROLLER::login, SessionRole.NOT_LOGGED_IN);
+      });
+      path("profiles/{id}", () -> {
+        get(PROFILE_CONTROLLER::getUserProfile);
+        path("edit", () -> {
+          get(PROFILE_CONTROLLER::getEditUserProfileForm, SessionRole.LOGGED_IN);
+          post(PROFILE_CONTROLLER::editUserProfile, SessionRole.LOGGED_IN);
+        });
+      });
+    });
     app.exception(UserNotFoundException.class, (e, ctx) -> ctx.status(404));
     app.error(401, "html", ctx -> ctx.render("unauthorized.peb"));
     app.error(404, "html", ctx -> ctx.render("not-found.peb"));
