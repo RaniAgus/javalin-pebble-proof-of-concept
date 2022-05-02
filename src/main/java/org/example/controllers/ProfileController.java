@@ -65,12 +65,12 @@ public class ProfileController implements WithGlobalEntityManager, Transactional
       }
       entityManager().getTransaction().commit();
 
-      ctx.redirect("/profiles/" + userId);
+      ctx.redirect("/profiles/me");
 
     } catch (ValidationException e) {
-      ctx.status(400).redirect("/profiles/" + userId + "/edit?error=true");
+      ctx.status(400).redirect("/profiles/me/edit?error=true");
     } catch (Exception e) {
-      ctx.status(500).redirect("/profiles/" + userId + "/edit?error=true");
+      ctx.status(500).redirect("/profiles/me/edit?error=true");
     }
   }
 }
