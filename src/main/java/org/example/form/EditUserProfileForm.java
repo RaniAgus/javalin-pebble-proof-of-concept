@@ -1,9 +1,10 @@
-package org.example.data;
+package org.example.form;
 
 import io.javalin.core.validation.*;
 import io.javalin.http.Context;
 import io.javalin.http.UploadedFile;
 import org.apache.commons.validator.routines.EmailValidator;
+import org.example.data.User;
 
 import java.time.LocalDate;
 import java.util.List;

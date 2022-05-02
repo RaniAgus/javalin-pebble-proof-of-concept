@@ -1,8 +1,8 @@
-package org.example.controllers;
+package org.example.controller;
 
 import io.javalin.http.Context;
 import io.javalin.http.UploadedFile;
-import org.example.data.EditUserProfileForm;
+import org.example.form.EditUserProfileForm;
 import org.example.data.User;
 import org.example.repository.UserRepository;
 import org.uqbarproject.jpa.java8.extras.WithGlobalEntityManager;

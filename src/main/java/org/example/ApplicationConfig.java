@@ -7,12 +7,13 @@ import io.javalin.core.validation.JavalinValidation;
 import io.javalin.http.staticfiles.Location;
 import io.javalin.plugin.rendering.JavalinRenderer;
 import io.javalin.plugin.rendering.template.JavalinPebble;
+import kotlin.jvm.functions.Function1;
 import org.example.auth.SessionManager;
-import org.example.validators.LocalDateConverter;
-import org.example.validators.StringConverter;
 
 import java.time.LocalDate;
 import java.util.function.Consumer;
+
+import static java.time.format.DateTimeFormatter.ofPattern;
 
 public class ApplicationConfig implements Consumer<JavalinConfig> {
   @Override
@@ -21,8 +22,8 @@ public class ApplicationConfig implements Consumer<JavalinConfig> {
     javalinConfig.accessManager(new SessionManager());
     JavalinRenderer.register(JavalinPebble.INSTANCE, ".peb");
     JavalinPebble.configure(configureEngine());
-    JavalinValidation.register(LocalDate.class, new LocalDateConverter());
-    JavalinValidation.register(String.class, new StringConverter());
+    JavalinValidation.register(String.class, stringConverter());
+    JavalinValidation.register(LocalDate.class, localDateConverter());
   }
 
   private PebbleEngine configureEngine() {
@@ -35,4 +36,11 @@ public class ApplicationConfig implements Consumer<JavalinConfig> {
         .build();
   }
 
+  private Function1<String, String> stringConverter() {
+    return s -> !s.isEmpty() ? s : null;
+  }
+
+  private Function1<String, LocalDate> localDateConverter() {
+    return s -> !s.isEmpty() ? LocalDate.parse(s, ofPattern("yyyy-MM-dd")) : null;
+  }
 }

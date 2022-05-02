@@ -2,9 +2,9 @@ package org.example;
 
 import io.javalin.Javalin;
 import org.example.auth.SessionRole;
-import org.example.controllers.HomeController;
-import org.example.controllers.ProfileController;
-import org.example.controllers.SessionController;
+import org.example.controller.HomeController;
+import org.example.controller.ProfileController;
+import org.example.controller.SessionController;
 import org.example.repository.UserNotFoundException;
 import org.example.repository.PostRepository;
 import org.example.repository.UserRepository;
