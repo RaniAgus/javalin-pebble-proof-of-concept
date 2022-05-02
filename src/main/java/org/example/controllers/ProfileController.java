@@ -3,6 +3,7 @@ package org.example.controllers;
 import io.javalin.core.validation.ValidationException;
 import io.javalin.http.Context;
 import io.javalin.http.UploadedFile;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.example.data.User;
 import org.example.repository.UserRepository;
 import org.uqbarproject.jpa.java8.extras.WithGlobalEntityManager;
@@ -12,6 +13,8 @@ import java.time.LocalDate;
 
 import static io.javalin.core.util.FileUtil.streamToFile;
 import static io.javalin.plugin.rendering.template.TemplateUtil.model;
+import static java.time.LocalDate.now;
+import static java.util.Arrays.asList;
 
 public class ProfileController implements WithGlobalEntityManager, TransactionalOps {
   private final UserRepository users;
@@ -40,7 +43,7 @@ public class ProfileController implements WithGlobalEntityManager, Transactional
     ctx.render("profile-edit.peb", model(
         "userId", ctx.sessionAttribute("userId"),
         "user", this.users.getById(userId),
-        "now", LocalDate.now(),
+        "now", now(),
         "error", ctx.queryParam("error")
     ));
   }
@@ -51,9 +54,25 @@ public class ProfileController implements WithGlobalEntityManager, Transactional
       User user = new User(
           ctx.formParamAsClass("firstName", String.class).get(),
           ctx.formParamAsClass("lastName", String.class).get(),
-          ctx.formParamAsClass("birthday", LocalDate.class).allowNullable().get(),
-          ctx.formParamAsClass("gender", String.class).get(),
-          ctx.formParamAsClass("email", String.class).get()
+          ctx.formParamAsClass("birthday", LocalDate.class)
+              .allowNullable()
+              .check(
+                  localDate -> localDate.isBefore(now().plusDays(1)),
+                  "Birthday must be today or earlier."
+              )
+              .get(),
+          ctx.formParamAsClass("gender", String.class)
+              .check(
+                  gender -> asList("Female", "Male", "Other").contains(gender),
+                  "Gender must be one of: Female, Male, Other."
+              )
+              .get(),
+          ctx.formParamAsClass("email", String.class)
+              .check(
+                  email -> EmailValidator.getInstance().isValid(email),
+                  "Invalid email address."
+              )
+              .get()
       );
       user.setId(userId);
       UploadedFile photo = ctx.uploadedFile("photo");
