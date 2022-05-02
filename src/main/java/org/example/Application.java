@@ -10,6 +10,7 @@ import org.example.repository.PostRepository;
 import org.example.repository.UserRepository;
 
 import static io.javalin.apibuilder.ApiBuilder.*;
+import static io.javalin.plugin.rendering.template.TemplateUtil.model;
 import static org.uqbarproject.jpa.java8.extras.PerThreadEntityManagers.closeEntityManager;
 import static org.uqbarproject.jpa.java8.extras.PerThreadEntityManagers.getEntityManager;
 
@@ -26,32 +27,33 @@ public class Application {
   public static void main(String[] args) {
     new Bootstrap().run();
 
-    Javalin app = Javalin.create(new ApplicationConfig()).start(7070);
+    Javalin.create(new ApplicationConfig())
+        .routes(() -> {
+          get("", ctx -> ctx.redirect("/home"));
+          get("home", HOME_CONTROLLER::getUserListing);
+          path("login", () -> {
+            get(SESSION_CONTROLLER::getLogin, SessionRole.NOT_LOGGED_IN);
+            post(SESSION_CONTROLLER::login, SessionRole.NOT_LOGGED_IN);
+          });
+          get("logout", SESSION_CONTROLLER::logout);
+          path("profiles", () -> {
+            path("me", () -> {
+              get(PROFILE_CONTROLLER::getUserProfileBySession, SessionRole.LOGGED_IN);
+              post(PROFILE_CONTROLLER::editUserProfile, SessionRole.LOGGED_IN);
+              get("edit", PROFILE_CONTROLLER::getEditUserProfileForm, SessionRole.LOGGED_IN);
+            });
+            get("{id}", PROFILE_CONTROLLER::getUserProfileByPath);
+          });
+          after(ctx -> {
+            if (getEntityManager().isOpen())
+              closeEntityManager();
+          });
+        })
+        .exception(UserNotFoundException.class, (e, ctx) -> ctx.status(404))
+        .error(404, "html", ctx -> ctx.render(
+            "not-found.peb", model("userId", ctx.sessionAttribute("userId"))
+        ))
+        .start(7070);
 
-    app.get("/", ctx -> ctx.redirect("/home"));
-    app.get("/home", HOME_CONTROLLER::getUserListing);
-    app.get("/logout", SESSION_CONTROLLER::logout);
-    app.routes(() -> {
-      path("login", () -> {
-        get(SESSION_CONTROLLER::getLogin, SessionRole.NOT_LOGGED_IN);
-        post(SESSION_CONTROLLER::login, SessionRole.NOT_LOGGED_IN);
-      });
-      path("profiles", () -> {
-        path("me", () -> {
-          get(PROFILE_CONTROLLER::getUserProfileBySession, SessionRole.LOGGED_IN);
-          post(PROFILE_CONTROLLER::editUserProfile, SessionRole.LOGGED_IN);
-          get("edit", PROFILE_CONTROLLER::getEditUserProfileForm, SessionRole.LOGGED_IN);
-        });
-        get("{id}", PROFILE_CONTROLLER::getUserProfileByPath);
-      });
-    });
-    app.exception(UserNotFoundException.class, (e, ctx) -> ctx.status(404));
-    app.error(401, "html", ctx -> ctx.render("unauthorized.peb"));
-    app.error(404, "html", ctx -> ctx.render("not-found.peb"));
-    app.after(ctx -> {
-      if (getEntityManager().isOpen()) {
-        closeEntityManager();
-      }
-    });
   }
 }
