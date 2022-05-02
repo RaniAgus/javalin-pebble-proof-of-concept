@@ -37,7 +37,7 @@ public class EditUserProfileForm {
     this.birthday = ctx.formParamAsClass("birthday", LocalDate.class)
         .allowNullable()
         .check(
-            localDate -> localDate.isBefore(now().plusDays(1)),
+            localDate -> localDate == null || localDate.isBefore(now().plusDays(1)),
             "Birthday must be today or earlier."
         );
     this.gender = ctx.formParamAsClass("gender", String.class)
