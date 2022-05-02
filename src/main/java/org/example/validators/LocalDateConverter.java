@@ -6,7 +6,7 @@ import java.time.LocalDate;
 
 import static java.time.format.DateTimeFormatter.ofPattern;
 
-public class LocalDateValidator implements Function1<String, LocalDate> {
+public class LocalDateConverter implements Function1<String, LocalDate> {
   @Override
   public LocalDate invoke(String s) {
     return !s.isEmpty() ? LocalDate.parse(s, ofPattern("yyyy-MM-dd")) : null;

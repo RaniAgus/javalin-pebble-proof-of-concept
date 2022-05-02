@@ -8,7 +8,8 @@ import io.javalin.http.staticfiles.Location;
 import io.javalin.plugin.rendering.JavalinRenderer;
 import io.javalin.plugin.rendering.template.JavalinPebble;
 import org.example.auth.SessionManager;
-import org.example.validators.LocalDateValidator;
+import org.example.validators.LocalDateConverter;
+import org.example.validators.StringConverter;
 
 import java.time.LocalDate;
 import java.util.function.Consumer;
@@ -20,7 +21,8 @@ public class ApplicationConfig implements Consumer<JavalinConfig> {
     javalinConfig.accessManager(new SessionManager());
     JavalinRenderer.register(JavalinPebble.INSTANCE, ".peb");
     JavalinPebble.configure(configureEngine());
-    JavalinValidation.register(LocalDate.class, new LocalDateValidator());
+    JavalinValidation.register(LocalDate.class, new LocalDateConverter());
+    JavalinValidation.register(String.class, new StringConverter());
   }
 
   private PebbleEngine configureEngine() {
