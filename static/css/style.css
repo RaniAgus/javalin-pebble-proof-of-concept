@@ -10,6 +10,11 @@ body::after {
     height: 60px; /* Set same as footer's height */
 }
 
+img {
+    width: 100px;
+    height: 100px;
+}
+
 .muted {
     color: #999;
 }
