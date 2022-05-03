@@ -1,8 +1,6 @@
 package org.example.data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
@@ -13,16 +11,18 @@ public class User {
   private LocalDate birthday;
   private String gender;
   private String email;
+  private @Enumerated Role role;
 
   public User() {
   }
 
-  public User(String firstName, String lastName, LocalDate birthday, String gender, String email) {
+  public User(String firstName, String lastName, LocalDate birthday, String gender, String email, Role role) {
     this.firstName = firstName;
     this.lastName = lastName;
     this.birthday = birthday;
     this.gender = gender;
     this.email = email;
+    this.role = role;
   }
 
   public Long getId() {
@@ -72,4 +72,17 @@ public class User {
   public void setEmail(String email) {
     this.email = email;
   }
+
+  public Role getRole() {
+    return role;
+  }
+
+  public void setRole(Role role) {
+    this.role = role;
+  }
+
+  public boolean isAdmin() {
+    return this.role == Role.ADMIN;
+  }
+
 }

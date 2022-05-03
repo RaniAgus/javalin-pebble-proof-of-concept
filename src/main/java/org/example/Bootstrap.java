@@ -1,6 +1,7 @@
 package org.example;
 
 import org.example.data.Post;
+import org.example.data.Role;
 import org.example.data.User;
 import org.uqbarproject.jpa.java8.extras.EntityManagerOps;
 import org.uqbarproject.jpa.java8.extras.WithGlobalEntityManager;
@@ -16,14 +17,14 @@ public class Bootstrap implements WithGlobalEntityManager, EntityManagerOps, Tra
   }
 
   private void persistUsers() {
-    persist(new User("Katniss", "Everdeen", LocalDate.now(), "Female", "keverdeen@gmail.com"));
-    persist(new User("Tyrion", "Lannister", LocalDate.now(), "Male", "lann_the_man@gmail.com"));
-    persist(new User("Hank", "Schrader", LocalDate.now(), "Male", "minerals@marie.com"));
-    persist(new User("Steve", "Holt", null, "Male", "steve@holt.com"));
-    persist(new User("Rick", "O'Connell", LocalDate.now(), "Male", "themummy@gmail.com"));
-    persist(new User("Samwise", "Gamgee", null, "Male", "sammie_3@gmail.com"));
-    persist(new User("Elaine", "Benes", LocalDate.now(), "Female", "e_ben@hotmail.com"));
-    persist(new User("Kenny", "Powers", LocalDate.now(), "Male", "f_this_noise@aol.com"));
+    persist(new User("Katniss", "Everdeen", LocalDate.now(), "Female", "keverdeen@gmail.com", Role.STANDARD_USER));
+    persist(new User("Tyrion", "Lannister", LocalDate.now(), "Male", "lann_the_man@gmail.com", Role.STANDARD_USER));
+    persist(new User("Hank", "Schrader", LocalDate.now(), "Male", "minerals@marie.com", Role.ADMIN));
+    persist(new User("Steve", "Holt", null, "Male", "steve@holt.com", Role.STANDARD_USER));
+    persist(new User("Rick", "O'Connell", LocalDate.now(), "Male", "themummy@gmail.com", Role.STANDARD_USER));
+    persist(new User("Samwise", "Gamgee", null, "Male", "sammie_3@gmail.com", Role.STANDARD_USER));
+    persist(new User("Elaine", "Benes", LocalDate.now(), "Female", "e_ben@hotmail.com", Role.ADMIN));
+    persist(new User("Kenny", "Powers", LocalDate.now(), "Male", "f_this_noise@aol.com", Role.STANDARD_USER));
   }
 
   private void persistPosts() {

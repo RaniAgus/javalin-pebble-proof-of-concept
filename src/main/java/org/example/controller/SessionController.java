@@ -4,6 +4,7 @@ import io.javalin.core.security.AccessManager;
 import io.javalin.core.security.RouteRole;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
+import io.javalin.http.HttpCode;
 import org.example.data.User;
 import org.example.repository.UserNotFoundException;
 import org.example.repository.UserRepository;
@@ -24,7 +25,12 @@ public class SessionController implements AccessManager {
   public void manage(@NotNull Handler handler,
                      @NotNull Context ctx,
                      @NotNull Set<RouteRole> roles) throws Exception {
-    handler.handle(ctx);
+    Long userId = ctx.sessionAttribute("userId");
+    if (roles.isEmpty() || roles.contains(users.getById(userId).getRole())) {
+      handler.handle(ctx);
+    } else {
+      ctx.status(HttpCode.NOT_FOUND);
+    }
   }
 
   public void validateUserNotLoggedIn(Context ctx) {
@@ -50,7 +56,7 @@ public class SessionController implements AccessManager {
 
       ctx.redirect("/" + ctx.formParam("origin"));
     } catch (UserNotFoundException e) {
-      ctx.status(401).redirect("/login?error=true");
+      ctx.status(HttpCode.UNAUTHORIZED).redirect("/login?error=true");
     }
   }
 
