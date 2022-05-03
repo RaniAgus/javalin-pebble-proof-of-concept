@@ -29,8 +29,10 @@ public class EditUserProfileForm {
   public EditUserProfileForm(Context ctx, Long userId) {
     this.id = ctx.formParamAsClass("id", Long.class)
         .check(id -> id.equals(userId), "Invalid user ID");
-    this.firstName = ctx.formParamAsClass("firstName", String.class);
-    this.lastName = ctx.formParamAsClass("lastName", String.class);
+    this.firstName = ctx.formParamAsClass("firstName", String.class)
+        .check(firstName -> !firstName.isEmpty(), "First name is required.");
+    this.lastName = ctx.formParamAsClass("lastName", String.class)
+        .check(lastName -> !lastName.isEmpty(), "Last name is required.");
     this.birthday = ctx.formParamAsClass("birthday", LocalDate.class)
         .allowNullable()
         .check(
@@ -78,7 +80,9 @@ public class EditUserProfileForm {
         .flatMap(v -> v.errors().entrySet().stream())
         .collect(Collectors.toMap(
             Map.Entry::getKey,
-            m -> m.getValue().stream().map(ValidationError::getMessage).collect(Collectors.toList())
+            m -> m.getValue().stream()
+                .map(ValidationError::getMessage)
+                .collect(Collectors.toList())
         ));
 
     UploadedFile photo = getPhoto();

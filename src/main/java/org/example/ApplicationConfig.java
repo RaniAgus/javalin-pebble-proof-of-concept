@@ -13,10 +13,8 @@ import kotlin.jvm.functions.Function1;
 import java.time.LocalDate;
 import java.util.function.Consumer;
 
-import static java.time.format.DateTimeFormatter.ofPattern;
-
 public class ApplicationConfig implements Consumer<JavalinConfig> {
-  private AccessManager accessManager;
+  private final AccessManager accessManager;
 
   public ApplicationConfig(AccessManager accessManager) {
     this.accessManager = accessManager;
@@ -28,7 +26,6 @@ public class ApplicationConfig implements Consumer<JavalinConfig> {
     javalinConfig.accessManager(this.accessManager);
     JavalinRenderer.register(JavalinPebble.INSTANCE, ".peb");
     JavalinPebble.configure(configureEngine());
-    JavalinValidation.register(String.class, stringConverter());
     JavalinValidation.register(LocalDate.class, localDateConverter());
   }
 
@@ -42,11 +39,7 @@ public class ApplicationConfig implements Consumer<JavalinConfig> {
         .build();
   }
 
-  private Function1<String, String> stringConverter() {
-    return s -> !s.isEmpty() ? s : null;
-  }
-
   private Function1<String, LocalDate> localDateConverter() {
-    return s -> !s.isEmpty() ? LocalDate.parse(s, ofPattern("yyyy-MM-dd")) : null;
+    return s -> !s.isEmpty() ? LocalDate.parse(s) : null;
   }
 }
