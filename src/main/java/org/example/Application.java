@@ -1,9 +1,11 @@
 package org.example;
 
 import io.javalin.Javalin;
+import io.javalin.http.HttpCode;
 import org.example.controller.HomeController;
 import org.example.controller.ProfileController;
 import org.example.controller.SessionController;
+import org.example.data.Role;
 import org.example.repository.UserNotFoundException;
 import org.example.repository.PostRepository;
 import org.example.repository.UserRepository;
@@ -40,17 +42,21 @@ public class Application {
             path("me", () -> {
               before(PROFILE_CONTROLLER::validateUserLoggedIn);
               get(PROFILE_CONTROLLER::getUserProfileBySession);
-              post(PROFILE_CONTROLLER::editUserProfile);
-              get("edit", PROFILE_CONTROLLER::getEditUserProfileForm);
+              post(PROFILE_CONTROLLER::editLoggedUserProfile);
+              get("edit", PROFILE_CONTROLLER::getEditUserProfileFormAsUser);
             });
-            get("{id}", PROFILE_CONTROLLER::getUserProfileByPath);
+            path("{userId}", () -> {
+              get(PROFILE_CONTROLLER::getUserProfileByPath);
+              post(PROFILE_CONTROLLER::editPathUserProfile, Role.ADMIN);
+              get("edit", PROFILE_CONTROLLER::getEditUserProfileFormAsAdmin, Role.ADMIN);
+            });
           });
           after(ctx -> {
             if (getEntityManager().isOpen())
               closeEntityManager();
           });
         })
-        .exception(UserNotFoundException.class, (e, ctx) -> ctx.status(404))
+        .exception(UserNotFoundException.class, (e, ctx) -> ctx.status(HttpCode.NOT_FOUND))
         .error(404, "html", ctx -> ctx.render(
             "not-found.peb", model("userId", ctx.sessionAttribute("userId"))
         ))

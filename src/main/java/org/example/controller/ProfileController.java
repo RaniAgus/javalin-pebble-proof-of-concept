@@ -1,9 +1,12 @@
 package org.example.controller;
 
+import io.javalin.core.validation.Validator;
 import io.javalin.http.Context;
+import io.javalin.http.HttpCode;
 import io.javalin.http.UploadedFile;
 import org.example.form.EditUserProfileForm;
 import org.example.data.User;
+import org.example.repository.UserNotFoundException;
 import org.example.repository.UserRepository;
 import org.uqbarproject.jpa.java8.extras.WithGlobalEntityManager;
 import org.uqbarproject.jpa.java8.extras.transaction.TransactionalOps;
@@ -22,7 +25,7 @@ public class ProfileController implements WithGlobalEntityManager, Transactional
   public void validateUserLoggedIn(Context ctx) {
     Long userId = ctx.sessionAttribute("userId");
     if (userId == null) {
-      ctx.status(403).redirect(
+      ctx.redirect(
           "/login?origin=" + ctx.path()
               .substring(1)
               .replace("/", "%2F")
@@ -31,34 +34,68 @@ public class ProfileController implements WithGlobalEntityManager, Transactional
   }
 
   private void getUserProfile(Context ctx, Long id) {
+    Long userId = ctx.sessionAttribute("userId");
     ctx.render("profile.peb", model(
         "userId", ctx.sessionAttribute("userId"),
-        "user", this.users.getById(id)
+        "user", this.users.getById(id),
+        "isAdmin", userId != null && this.users.getById(userId).isAdmin()
     ));
   }
 
   public void getUserProfileByPath(Context ctx) {
-    this.getUserProfile(ctx, ctx.pathParamAsClass("id", Long.class).get());
+    Validator<Long> userId = ctx.pathParamAsClass("userId", Long.class);
+    if (userId.errors().isEmpty()) {
+      this.getUserProfile(ctx, userId.get());
+    } else {
+      throw new UserNotFoundException();
+    }
   }
 
   public void getUserProfileBySession(Context ctx) {
     this.getUserProfile(ctx, ctx.sessionAttribute("userId"));
   }
 
-  public void getEditUserProfileForm(Context ctx) {
+  public void getEditUserProfileFormAsUser(Context ctx) {
     Long userId = ctx.sessionAttribute("userId");
+    getEditUserProfileForm(ctx, userId, false);
+  }
+
+  public void getEditUserProfileFormAsAdmin(Context ctx) {
+    Validator<Long> userId = ctx.pathParamAsClass("userId", Long.class);
+    if (userId.errors().isEmpty()) {
+      getEditUserProfileForm(ctx, userId.get(), true);
+    } else {
+      throw new UserNotFoundException();
+    }
+  }
+
+  private void getEditUserProfileForm(Context ctx, Long userId, boolean isAdmin) {
     ctx.render("profile-edit.peb", model(
-        "userId", ctx.sessionAttribute("userId"),
+        "userId", userId,
         "user", this.users.getById(userId),
         "now", now(),
-        "error", ctx.queryParam("error")
+        "error", ctx.queryParam("error"),
+        "isAdmin", isAdmin
     ));
   }
 
-  public void editUserProfile(Context ctx) {
-    EditUserProfileForm form = new EditUserProfileForm(ctx);
+  public void editLoggedUserProfile(Context ctx) {
+    editUserProfile(ctx, ctx.sessionAttribute("userId"), "me");
+  }
+
+  public void editPathUserProfile(Context ctx) {
+    Validator<Long> userId = ctx.pathParamAsClass("userId", Long.class);
+    if (userId.errors().isEmpty()) {
+      editUserProfile(ctx, userId.get(), userId.get().toString());
+    } else {
+      throw new UserNotFoundException();
+    }
+  }
+
+  private void editUserProfile(Context ctx, Long userId, String userPath) {
+    EditUserProfileForm form = new EditUserProfileForm(ctx, userId);
     if (!form.isValid()) {
-      ctx.status(400).redirect("/profiles/me/edit?error=true");
+      ctx.status(HttpCode.BAD_REQUEST).redirect("/profiles/" + userPath + "/edit?error=true");
       return;
     }
 
@@ -73,9 +110,9 @@ public class ProfileController implements WithGlobalEntityManager, Transactional
       }
       entityManager().getTransaction().commit();
 
-      ctx.redirect("/profiles/me");
+      ctx.redirect("/profiles/" + userPath);
     } catch (Exception e) {
-      ctx.status(500).redirect("/profiles/me/edit?error=true");
+      ctx.status(HttpCode.INTERNAL_SERVER_ERROR).redirect("/profiles/" + userPath + "/edit?error=true");
     }
   }
 }

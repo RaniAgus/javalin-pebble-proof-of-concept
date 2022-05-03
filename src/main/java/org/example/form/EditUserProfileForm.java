@@ -26,12 +26,9 @@ public class EditUserProfileForm {
   private final UploadedFile photo;
   private final Map<String, List<String>> errors;
 
-  public EditUserProfileForm(Context ctx) {
+  public EditUserProfileForm(Context ctx, Long userId) {
     this.id = ctx.formParamAsClass("id", Long.class)
-        .check(
-            id -> id == ctx.sessionAttribute("userId"),
-            "Invalid user ID"
-        );
+        .check(id -> id.equals(userId), "Invalid user ID");
     this.firstName = ctx.formParamAsClass("firstName", String.class);
     this.lastName = ctx.formParamAsClass("lastName", String.class);
     this.birthday = ctx.formParamAsClass("birthday", LocalDate.class)

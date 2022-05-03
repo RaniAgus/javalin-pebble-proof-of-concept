@@ -1,6 +1,7 @@
 {# @pebvariable name="user" type="org.example.data.User" #}
 {# @pebvariable name="now" type="java.time.LocalDate" #}
 {# @pebvariable name="error" type="java.lang.String" #}
+{# @pebvariable name="isAdmin" type="java.lang.Boolean" #}
 
 {% extends 'layout.peb' %}
 {% set activeNav = 'profile' %}
@@ -10,7 +11,7 @@
 {% block content %}
 
 <form class="profile form-group"
-      enctype="multipart/form-data" action="/profiles/me" method="post" >
+      enctype="multipart/form-data" action="/profiles/{{ isAdmin ? user.id : 'me' }}" method="post" >
   <div class="row">
     <div class="col-md-6">
       <label for="firstName">First Name</label>
@@ -58,7 +59,7 @@
         <dd>
           <select class="form-control" name="gender" id="gender" required>
             {% for gender in ['Male', 'Female', 'Other'] %}
-              <option value="{{ gender }}" {% if user.gender equals gender %} selected {% endif %}>
+              <option value="{{ gender }}" {{ user.gender equals gender ? 'selected' : '' }}>
                 {{ gender }}
               </option>
             {% endfor %}
@@ -84,7 +85,7 @@
   {% endif %}
   <div class="row">
     <div class="col-md-12 text-right">
-      <a href="/profiles/{{ user.id }}" class="btn btn-secondary">Cancel</a>
+      <a href="/profiles/{{ isAdmin ? user.id : 'me' }}" class="btn btn-secondary">Cancel</a>
       <button class="btn btn-success" type="submit">Save changes</button>
     </div>
   </div>
