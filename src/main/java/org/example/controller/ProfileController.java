@@ -19,6 +19,17 @@ public class ProfileController implements WithGlobalEntityManager, Transactional
     this.users = userRepository;
   }
 
+  public void validateUserLoggedIn(Context ctx) {
+    Long userId = ctx.sessionAttribute("userId");
+    if (userId == null) {
+      ctx.status(403).redirect(
+          "/login?origin=" + ctx.path()
+              .substring(1)
+              .replace("/", "%2F")
+      );
+    }
+  }
+
   private void getUserProfile(Context ctx, Long id) {
     ctx.render("profile.peb", model(
         "userId", ctx.sessionAttribute("userId"),

@@ -1,17 +1,36 @@
 package org.example.controller;
 
+import io.javalin.core.security.AccessManager;
+import io.javalin.core.security.RouteRole;
 import io.javalin.http.Context;
+import io.javalin.http.Handler;
 import org.example.data.User;
 import org.example.repository.UserNotFoundException;
 import org.example.repository.UserRepository;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
 
 import static io.javalin.plugin.rendering.template.TemplateUtil.model;
 
-public class SessionController {
+public class SessionController implements AccessManager {
   private final UserRepository users;
 
   public SessionController(UserRepository users) {
     this.users = users;
+  }
+
+  @Override
+  public void manage(@NotNull Handler handler,
+                     @NotNull Context ctx,
+                     @NotNull Set<RouteRole> roles) throws Exception {
+    handler.handle(ctx);
+  }
+
+  public void validateUserNotLoggedIn(Context ctx) {
+    if (ctx.sessionAttribute("userId") != null) {
+      ctx.redirect("/");
+    }
   }
 
   public void getLogin(Context ctx) {

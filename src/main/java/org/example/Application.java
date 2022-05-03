@@ -1,7 +1,6 @@
 package org.example;
 
 import io.javalin.Javalin;
-import org.example.auth.SessionRole;
 import org.example.controller.HomeController;
 import org.example.controller.ProfileController;
 import org.example.controller.SessionController;
@@ -27,20 +26,22 @@ public class Application {
   public static void main(String[] args) {
     new Bootstrap().run();
 
-    Javalin.create(new ApplicationConfig())
+    Javalin.create(new ApplicationConfig(SESSION_CONTROLLER))
         .routes(() -> {
           get("", ctx -> ctx.redirect("/home"));
           get("home", HOME_CONTROLLER::getUserListing);
           path("login", () -> {
-            get(SESSION_CONTROLLER::getLogin, SessionRole.NOT_LOGGED_IN);
-            post(SESSION_CONTROLLER::login, SessionRole.NOT_LOGGED_IN);
+            before(SESSION_CONTROLLER::validateUserNotLoggedIn);
+            get(SESSION_CONTROLLER::getLogin);
+            post(SESSION_CONTROLLER::login);
           });
           get("logout", SESSION_CONTROLLER::logout);
           path("profiles", () -> {
             path("me", () -> {
-              get(PROFILE_CONTROLLER::getUserProfileBySession, SessionRole.LOGGED_IN);
-              post(PROFILE_CONTROLLER::editUserProfile, SessionRole.LOGGED_IN);
-              get("edit", PROFILE_CONTROLLER::getEditUserProfileForm, SessionRole.LOGGED_IN);
+              before(PROFILE_CONTROLLER::validateUserLoggedIn);
+              get(PROFILE_CONTROLLER::getUserProfileBySession);
+              post(PROFILE_CONTROLLER::editUserProfile);
+              get("edit", PROFILE_CONTROLLER::getEditUserProfileForm);
             });
             get("{id}", PROFILE_CONTROLLER::getUserProfileByPath);
           });
