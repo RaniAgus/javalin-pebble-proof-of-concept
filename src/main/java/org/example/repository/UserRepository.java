@@ -7,11 +7,19 @@ import java.util.Optional;
 
 public class UserRepository implements WithGlobalEntityManager {
   public User getById(Long id) {
+    if (id == null) {
+      throw new UserNotFoundException();
+    }
+
     return Optional.ofNullable(entityManager().find(User.class, id))
         .orElseThrow(() -> new UserNotFoundException(id));
   }
 
   public User getByEmail(String email) {
+    if (email == null) {
+      throw new UserNotFoundException();
+    }
+
     return entityManager()
         .createQuery("from User u where u.email like :email", User.class)
         .setParameter("email", "%" + email + "%")
