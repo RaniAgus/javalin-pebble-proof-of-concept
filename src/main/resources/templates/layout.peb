@@ -12,7 +12,7 @@
   <div class="container">
     <div class="row">
       <div class="col-md-3">
-        {% if userId is not empty %}
+        {% if userId %}
           {% include 'layout/sidebar.peb' %}
         {% endif %}
       </div>

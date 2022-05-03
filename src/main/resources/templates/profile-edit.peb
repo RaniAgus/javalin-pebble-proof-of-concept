@@ -57,15 +57,11 @@
         </dt>
         <dd>
           <select class="form-control" name="gender" id="gender" required>
-            <option value="Male" {% if user.gender equals 'Male' %} selected {% endif %}>
-              Male
-            </option>
-            <option value="Female" {% if user.gender equals 'Female' %} selected {% endif %}>
-              Female
-            </option>
-            <option value="Other" {% if user.gender equals 'Other' %} selected {% endif %}>
-              Other
-            </option>
+            {% for gender in ['Male', 'Female', 'Other'] %}
+              <option value="{{ gender }}" {% if user.gender equals gender %} selected {% endif %}>
+                {{ gender }}
+              </option>
+            {% endfor %}
           </select>
         </dd>
         <dt>
