@@ -7,14 +7,11 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.example.data.User;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.Set;
 
+import static io.javalin.core.validation.JavalinValidation.collectErrors;
 import static java.time.LocalDate.now;
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 
 public class EditUserProfileForm {
   private final Validator<Long> id;
@@ -24,37 +21,32 @@ public class EditUserProfileForm {
   private final Validator<String> gender;
   private final Validator<String> email;
   private final UploadedFile photo;
-  private final Map<String, List<String>> errors;
 
   public EditUserProfileForm(Context ctx, Long userId) {
-    this.id = ctx.formParamAsClass("id", Long.class)
-        .check(id -> id.equals(userId), "Invalid user ID");
-    this.firstName = ctx.formParamAsClass("firstName", String.class)
-        .check(firstName -> !firstName.isEmpty(), "First name is required.");
-    this.lastName = ctx.formParamAsClass("lastName", String.class)
-        .check(lastName -> !lastName.isEmpty(), "Last name is required.");
-    this.birthday = ctx.formParamAsClass("birthday", LocalDate.class)
+    id = ctx.formParamAsClass("id", Long.class)
+        .check(id -> id.equals(userId), "");
+    firstName = ctx.formParamAsClass("firstName", String.class)
+        .check(firstName -> !firstName.isEmpty(), "");
+    lastName = ctx.formParamAsClass("lastName", String.class)
+        .check(lastName -> !lastName.isEmpty(), "");
+    birthday = ctx.formParamAsClass("birthday", LocalDate.class)
         .allowNullable()
-        .check(
-            localDate -> localDate == null || localDate.isBefore(now().plusDays(1)),
-            "Birthday must be today or earlier."
-        );
-    this.gender = ctx.formParamAsClass("gender", String.class)
-        .check(
-            gender -> asList("Female", "Male", "Other").contains(gender),
-            "Gender must be one of: Female, Male, Other."
-        );
-    this.email = ctx.formParamAsClass("email", String.class)
-        .check(
-            email -> EmailValidator.getInstance().isValid(email),
-            "Invalid email address."
-        );
-    this.photo = ctx.uploadedFile("photo");
-    this.errors = collectErrors();
+        .check(localDate -> localDate.isBefore(now().plusDays(1)), "");
+    gender = ctx.formParamAsClass("gender", String.class)
+        .check(gender -> asList("Female", "Male", "Other").contains(gender), "");
+    email = ctx.formParamAsClass("email", String.class)
+        .check(email -> EmailValidator.getInstance().isValid(email), "");
+    photo = ctx.uploadedFile("photo");
   }
 
   public boolean isValid() {
-    return this.errors.isEmpty();
+    Set<String> errors = collectErrors(id, firstName, lastName, gender, email).keySet();
+    errors.addAll(birthday.errors().keySet());
+    if (photo != null && !"image/jpeg".equals(photo.getContentType())) {
+      errors.add("photo");
+    }
+
+    return errors.isEmpty();
   }
 
   public Long getId() {
@@ -73,24 +65,5 @@ public class EditUserProfileForm {
 
   public UploadedFile getPhoto() {
     return photo != null && photo.getSize() > 0 ? photo : null;
-  }
-
-  private Map<String, List<String>> collectErrors() {
-    Map<String, List<String>> errors = Stream.of(id, firstName, lastName, birthday, gender, email)
-        .flatMap(v -> v.errors().entrySet().stream())
-        .collect(Collectors.toMap(
-            Map.Entry::getKey,
-            m -> m.getValue().stream()
-                .map(ValidationError::getMessage)
-                .collect(Collectors.toList())
-        ));
-
-    UploadedFile photo = getPhoto();
-    String contentType = photo != null ? photo.getContentType() : null;
-    if (photo != null && (contentType == null || !contentType.equals("image/jpeg"))) {
-      errors.put("photo", singletonList("Photo must be in jpeg format"));
-    }
-
-    return errors;
   }
 }
