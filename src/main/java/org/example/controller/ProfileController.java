@@ -25,11 +25,7 @@ public class ProfileController implements WithGlobalEntityManager, Transactional
   public void validateUserLoggedIn(Context ctx) {
     Long userId = ctx.sessionAttribute("userId");
     if (userId == null) {
-      ctx.redirect(
-          "/login?origin=" + ctx.path()
-              .substring(1)
-              .replace("/", "%2F")
-      );
+      ctx.redirect("/login?origin=" + ctx.path().substring(1).replace("/", "%2F"));
     }
   }
 
@@ -44,11 +40,10 @@ public class ProfileController implements WithGlobalEntityManager, Transactional
 
   public void getUserProfileByPath(Context ctx) {
     Validator<Long> userId = ctx.pathParamAsClass("userId", Long.class);
-    if (userId.errors().isEmpty()) {
-      this.getUserProfile(ctx, userId.get());
-    } else {
+    if (!userId.errors().isEmpty()) {
       throw new UserNotFoundException();
     }
+    this.getUserProfile(ctx, userId.get());
   }
 
   public void getUserProfileBySession(Context ctx) {
@@ -62,11 +57,10 @@ public class ProfileController implements WithGlobalEntityManager, Transactional
 
   public void getEditUserProfileFormAsAdmin(Context ctx) {
     Validator<Long> userId = ctx.pathParamAsClass("userId", Long.class);
-    if (userId.errors().isEmpty()) {
-      getEditUserProfileForm(ctx, userId.get(), true);
-    } else {
+    if (!userId.errors().isEmpty()) {
       throw new UserNotFoundException();
     }
+    getEditUserProfileForm(ctx, userId.get(), true);
   }
 
   private void getEditUserProfileForm(Context ctx, Long userId, boolean isAdmin) {
@@ -85,11 +79,10 @@ public class ProfileController implements WithGlobalEntityManager, Transactional
 
   public void editPathUserProfile(Context ctx) {
     Validator<Long> userId = ctx.pathParamAsClass("userId", Long.class);
-    if (userId.errors().isEmpty()) {
-      editUserProfile(ctx, userId.get(), userId.get().toString());
-    } else {
+    if (!userId.errors().isEmpty()) {
       throw new UserNotFoundException();
     }
+    editUserProfile(ctx, userId.get(), userId.get().toString());
   }
 
   private void editUserProfile(Context ctx, Long userId, String userPath) {
