@@ -7,11 +7,13 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.example.data.User;
 
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.List;
+import java.util.Map;
 
 import static io.javalin.core.validation.JavalinValidation.collectErrors;
 import static java.time.LocalDate.now;
 import static java.util.Arrays.asList;
+import static java.util.Collections.*;
 
 public class EditUserProfileForm {
   private final Validator<Long> id;
@@ -24,46 +26,57 @@ public class EditUserProfileForm {
 
   public EditUserProfileForm(Context ctx, Long userId) {
     id = ctx.formParamAsClass("id", Long.class)
-        .check(id -> id.equals(userId), "");
+        .check(it -> it.equals(userId), "Not a valid user ID");
     firstName = ctx.formParamAsClass("firstName", String.class)
-        .check(firstName -> !firstName.isEmpty(), "");
+        .check(it -> !it.isEmpty(), "First name is required");
     lastName = ctx.formParamAsClass("lastName", String.class)
-        .check(lastName -> !lastName.isEmpty(), "");
+        .check(it -> !it.isEmpty(), "Last name is required");
     birthday = ctx.formParamAsClass("birthday", LocalDate.class)
         .allowNullable()
-        .check(localDate -> localDate.isBefore(now().plusDays(1)), "");
+        .check(
+            it -> it == null || it.isBefore(now().plusDays(1)),
+            "Birthday must be today or before"
+        );
     gender = ctx.formParamAsClass("gender", String.class)
-        .check(gender -> asList("Female", "Male", "Other").contains(gender), "");
+        .check(
+            it -> asList("Female", "Male", "Other").contains(it),
+            "Gender must be one of: Female, Male, Other"
+        );
     email = ctx.formParamAsClass("email", String.class)
-        .check(email -> EmailValidator.getInstance().isValid(email), "");
+        .check(
+            it -> EmailValidator.getInstance().isValid(it),
+            "Email address is not in a valid format"
+        );
     photo = ctx.uploadedFile("photo");
   }
 
-  public boolean isValid() {
-    Set<String> errors = collectErrors(id, firstName, lastName, gender, email).keySet();
-    errors.addAll(birthday.errors().keySet());
+  public Map<String, List<ValidationError<?>>> getErrors() {
+    Map<String, List<ValidationError<?>>> errors =
+        collectErrors(id, firstName, lastName, birthday, gender, email);
+
     if (photo != null && !"image/jpeg".equals(photo.getContentType())) {
-      errors.add("photo");
+      errors.put("photo", singletonList(new ValidationError<>(
+          "Photo must be in jpeg format", emptyMap(), photo.getContentType()
+      )));
     }
 
-    return errors.isEmpty();
+    return errors;
   }
 
   public Long getId() {
     return id.get();
   }
 
-  public User updateUser(User user) {
+  public void fillUser(User user) {
     user.setFirstName(firstName.get());
     user.setLastName(lastName.get());
     user.setBirthday(birthday.get());
     user.setGender(gender.get());
     user.setEmail(email.get());
-
-    return user;
   }
 
   public UploadedFile getPhoto() {
     return photo != null && photo.getSize() > 0 ? photo : null;
   }
+
 }

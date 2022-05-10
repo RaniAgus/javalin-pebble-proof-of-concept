@@ -1,6 +1,5 @@
 package org.example.controller;
 
-import io.javalin.core.validation.Validator;
 import io.javalin.http.Context;
 import io.javalin.http.HttpCode;
 import io.javalin.http.UploadedFile;
@@ -81,13 +80,14 @@ public class ProfileController implements WithGlobalEntityManager, Transactional
 
   private void editUserProfile(Context ctx, Long userId, String userPath) {
     EditUserProfileForm form = new EditUserProfileForm(ctx, userId);
-    if (!form.isValid()) {
-      ctx.status(HttpCode.BAD_REQUEST).redirect("/profiles/" + userPath + "/edit?error=true");
+    if (!form.getErrors().isEmpty()) {
+      ctx.status(HttpCode.BAD_REQUEST).json(form.getErrors());
       return;
     }
 
     try {
-      User user = form.updateUser(users.getById(form.getId()));
+      User user = users.getById(form.getId());
+      form.fillUser(user);
       UploadedFile photo = form.getPhoto();
 
       entityManager().getTransaction().begin();
