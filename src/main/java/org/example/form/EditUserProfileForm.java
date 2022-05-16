@@ -1,12 +1,12 @@
 package org.example.form;
 
 import io.javalin.core.validation.*;
-import io.javalin.http.Context;
 import io.javalin.http.UploadedFile;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.example.data.User;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,51 +16,64 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.*;
 
 public class EditUserProfileForm {
-  private final Validator<Long> id;
-  private final Validator<String> firstName;
-  private final Validator<String> lastName;
-  private final NullableValidator<LocalDate> birthday;
-  private final Validator<String> gender;
-  private final Validator<String> email;
-  private final UploadedFile photo;
+  private Validator<Long> id;
+  private Validator<String> firstName;
+  private Validator<String> lastName;
+  private NullableValidator<LocalDate> birthday;
+  private Validator<String> gender;
+  private Validator<String> email;
+  private UploadedFile photo;
+  Map<String, List<ValidationError<?>>> photoErrors = new HashMap<>();
 
-  public EditUserProfileForm(Context ctx, Long userId) {
-    id = ctx.formParamAsClass("id", Long.class)
+  public EditUserProfileForm setId(Validator<Long> id, Long userId) {
+    this.id = id
         .check(it -> it.equals(userId), "Not a valid user ID");
-    firstName = ctx.formParamAsClass("firstName", String.class)
-        .check(it -> !it.isEmpty(), "First name is required");
-    lastName = ctx.formParamAsClass("lastName", String.class)
-        .check(it -> !it.isEmpty(), "Last name is required");
-    birthday = ctx.formParamAsClass("birthday", LocalDate.class)
-        .allowNullable()
-        .check(
-            it -> it == null || it.isBefore(now().plusDays(1)),
-            "Birthday must be today or before"
-        );
-    gender = ctx.formParamAsClass("gender", String.class)
-        .check(
-            it -> asList("Female", "Male", "Other").contains(it),
-            "Gender must be one of: Female, Male, Other"
-        );
-    email = ctx.formParamAsClass("email", String.class)
-        .check(
-            it -> EmailValidator.getInstance().isValid(it),
-            "Email address is not in a valid format"
-        );
-    photo = ctx.uploadedFile("photo");
+    return this;
   }
 
-  public Map<String, List<ValidationError<?>>> getErrors() {
-    Map<String, List<ValidationError<?>>> errors =
-        collectErrors(id, firstName, lastName, birthday, gender, email);
+  public EditUserProfileForm setFirstName(Validator<String> firstName) {
+    this.firstName = firstName
+        .check(it -> !it.isEmpty(), "First name is required");
+    return this;
+  }
 
-    if (photo != null && !"image/jpeg".equals(photo.getContentType())) {
-      errors.put("photo", singletonList(new ValidationError<>(
-          "Photo must be in jpeg format", emptyMap(), photo.getContentType()
-      )));
+  public EditUserProfileForm setLastName(Validator<String> lastName) {
+    this.lastName = lastName
+        .check(it -> !it.isEmpty(), "Last name is required");
+    return this;
+  }
+
+  public EditUserProfileForm setBirthday(Validator<LocalDate> birthday) {
+    this.birthday = birthday
+        .allowNullable()
+        .check(it -> it == null || it.isBefore(now().plusDays(1)),
+            "Birthday must be today or before");
+    return this;
+  }
+
+  public EditUserProfileForm setGender(Validator<String> gender) {
+    this.gender = gender
+        .check(it -> asList("Female", "Male", "Other").contains(it),
+            "Gender must be one of: Female, Male, Other");
+    return this;
+  }
+
+  public EditUserProfileForm setEmail(Validator<String> email) {
+    this.email = email
+        .check(it -> EmailValidator.getInstance().isValid(it),
+            "Email address is not in a valid format");
+    return this;
+  }
+
+  public EditUserProfileForm setPhoto(UploadedFile photo) {
+    if (photo == null) {
+      photoErrors.put("photo", validationError("NULLCHECK_FAILED", null));
+    } else if (!"image/jpeg".equals(photo.getContentType())) {
+      photoErrors.put("photo", validationError(
+          "Photo must be in jpeg format", photo.getContentType()));
     }
-
-    return errors;
+    this.photo = photo;
+    return this;
   }
 
   public Long getId() {
@@ -76,7 +89,22 @@ public class EditUserProfileForm {
   }
 
   public UploadedFile getPhoto() {
-    return photo != null && photo.getSize() > 0 ? photo : null;
+    if (!photoErrors.isEmpty()) {
+      throw new ValidationException(emptyMap());
+    }
+    return photo;
+  }
+
+  public Map<String, List<ValidationError<?>>> getErrors() {
+    Map<String, List<ValidationError<?>>> errors =
+        collectErrors(id, firstName, lastName, birthday, gender, email);
+    errors.putAll(photoErrors);
+
+    return errors;
+  }
+
+  private static List<ValidationError<?>> validationError(String message, Object value) {
+    return singletonList(new ValidationError<>(message, emptyMap(), value));
   }
 
 }

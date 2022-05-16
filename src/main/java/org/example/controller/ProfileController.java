@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import io.javalin.core.validation.ValidationException;
 import io.javalin.http.Context;
 import io.javalin.http.HttpCode;
 import io.javalin.http.UploadedFile;
@@ -9,6 +10,8 @@ import org.example.repository.UserNotFoundException;
 import org.example.repository.UserRepository;
 import org.uqbarproject.jpa.java8.extras.WithGlobalEntityManager;
 import org.uqbarproject.jpa.java8.extras.transaction.TransactionalOps;
+
+import java.time.LocalDate;
 
 import static io.javalin.core.util.FileUtil.streamToFile;
 import static io.javalin.plugin.rendering.template.TemplateUtil.model;
@@ -79,11 +82,14 @@ public class ProfileController implements WithGlobalEntityManager, Transactional
   }
 
   private void editUserProfile(Context ctx, Long userId, String userPath) {
-    EditUserProfileForm form = new EditUserProfileForm(ctx, userId);
-    if (!form.getErrors().isEmpty()) {
-      ctx.status(HttpCode.BAD_REQUEST).json(form.getErrors());
-      return;
-    }
+    EditUserProfileForm form = new EditUserProfileForm()
+        .setId(ctx.formParamAsClass("id", Long.class), userId)
+        .setFirstName(ctx.formParamAsClass("firstName", String.class))
+        .setLastName(ctx.formParamAsClass("lastName", String.class))
+        .setBirthday(ctx.formParamAsClass("birthday", LocalDate.class))
+        .setGender(ctx.formParamAsClass("gender", String.class))
+        .setEmail(ctx.formParamAsClass("email", String.class))
+        .setPhoto(ctx.uploadedFile("photo"));
 
     try {
       User user = users.getById(form.getId());
@@ -92,12 +98,12 @@ public class ProfileController implements WithGlobalEntityManager, Transactional
 
       entityManager().getTransaction().begin();
       this.users.update(user);
-      if (photo != null) {
-        streamToFile(photo.getContent(), "static/images/" + user.getId() + ".jpg");
-      }
+      streamToFile(photo.getContent(), "static/images/" + user.getId() + ".jpg");
       entityManager().getTransaction().commit();
 
       ctx.redirect("/profiles/" + userPath);
+    } catch (ValidationException e) {
+      ctx.status(HttpCode.BAD_REQUEST).json(form.getErrors());
     } catch (Exception e) {
       ctx.status(HttpCode.INTERNAL_SERVER_ERROR).redirect("/profiles/" + userPath + "/edit?error=true");
     }
