@@ -1,4 +1,4 @@
-# javalin-pebble-example
+# javalin-pebble-proof-of-concept
 
 Example Application using [Javalin](https://javalin.io/), 
 [Pebble](https://pebbletemplates.io/) and
