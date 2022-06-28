@@ -1,22 +1,21 @@
 pipeline {
     agent any
 
+    tools {
+        jdk 'jdk-8'
+        maven 'mvn-3.8.6'
+    }
+
     stages {
         stage("build") {
             steps {
-                echo 'testing webhook...'
-            }
-        }
-
-        stage("test") {
-            steps {
-                echo 'testing...'
+                sh 'mvn clean install'
             }
         }
 
         stage("deploy") {
             steps {
-                echo 'deploying...'
+                sh 'java -jar target/javalin-example-1.0-SNAPSHOT-jar-with-dependencies.jar'
             }
         }
     }
