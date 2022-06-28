@@ -1,17 +1,15 @@
 package org.example.data;
 
-import javax.persistence.*;
 import java.time.LocalDate;
 
-@Entity
 public class User {
-  private @Id @GeneratedValue Long id;
+  private Long id;
   private String firstName;
   private String lastName;
   private LocalDate birthday;
   private String gender;
   private String email;
-  private @Enumerated Role role;
+  private Role role;
 
   public User() {
   }

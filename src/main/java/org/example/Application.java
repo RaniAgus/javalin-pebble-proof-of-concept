@@ -12,13 +12,11 @@ import org.example.repository.UserRepository;
 
 import static io.javalin.apibuilder.ApiBuilder.*;
 import static io.javalin.plugin.rendering.template.TemplateUtil.model;
-import static org.uqbarproject.jpa.java8.extras.PerThreadEntityManagers.closeEntityManager;
-import static org.uqbarproject.jpa.java8.extras.PerThreadEntityManagers.getEntityManager;
 
 public class Application {
   // Repository layer
-  private static final PostRepository POST_REPOSITORY = new PostRepository();
   private static final UserRepository USER_REPOSITORY = new UserRepository();
+  private static final PostRepository POST_REPOSITORY = new PostRepository(USER_REPOSITORY);
 
   // Controller layer
   private static final HomeController HOME_CONTROLLER = new HomeController(POST_REPOSITORY);
@@ -26,8 +24,6 @@ public class Application {
   private static final ProfileController PROFILE_CONTROLLER = new ProfileController(USER_REPOSITORY);
 
   public static void main(String[] args) {
-    new Bootstrap().run();
-
     Javalin.create(new ApplicationConfig(SESSION_CONTROLLER))
         .routes(() -> {
           get("", ctx -> ctx.redirect("/home"));
@@ -50,10 +46,6 @@ public class Application {
               post(PROFILE_CONTROLLER::editPathUserProfile, Role.ADMIN);
               get("edit", PROFILE_CONTROLLER::getEditUserProfileFormAsAdmin, Role.ADMIN);
             });
-          });
-          after(ctx -> {
-            if (getEntityManager().isOpen())
-              closeEntityManager();
           });
         })
         .exception(UserNotFoundException.class, (e, ctx) -> ctx.status(HttpCode.NOT_FOUND))

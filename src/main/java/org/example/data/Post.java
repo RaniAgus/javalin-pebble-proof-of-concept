@@ -1,16 +1,10 @@
 package org.example.data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import java.time.LocalDate;
 
-@Entity
 public class Post {
-  private @Id @GeneratedValue Long id;
+  private Long id;
 
-  @ManyToOne
   private User user;
   private LocalDate date;
   private Integer likes;

@@ -8,8 +8,6 @@ import org.example.form.EditUserProfileForm;
 import org.example.data.User;
 import org.example.repository.UserNotFoundException;
 import org.example.repository.UserRepository;
-import org.uqbarproject.jpa.java8.extras.WithGlobalEntityManager;
-import org.uqbarproject.jpa.java8.extras.transaction.TransactionalOps;
 
 import java.time.LocalDate;
 
@@ -17,7 +15,7 @@ import static io.javalin.core.util.FileUtil.streamToFile;
 import static io.javalin.plugin.rendering.template.TemplateUtil.model;
 import static java.time.LocalDate.now;
 
-public class ProfileController implements WithGlobalEntityManager, TransactionalOps {
+public class ProfileController {
   private final UserRepository users;
 
   public ProfileController(UserRepository userRepository) {
@@ -96,10 +94,8 @@ public class ProfileController implements WithGlobalEntityManager, Transactional
       form.fillUser(user);
       UploadedFile photo = form.getPhoto();
 
-      entityManager().getTransaction().begin();
       this.users.update(user);
       streamToFile(photo.getContent(), "static/images/" + user.getId() + ".jpg");
-      entityManager().getTransaction().commit();
 
       ctx.redirect("/profiles/" + userPath);
     } catch (ValidationException e) {
